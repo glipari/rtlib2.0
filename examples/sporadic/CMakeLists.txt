@@ -1,11 +1,16 @@
 set(metasim_INCLUDE_DIRS "${metasim_DIR}/../src")
-set(metasim_LIBRARY "${metasim_DIR}/src/Debug/metasim.lib")
 
 # Add defs for the compiler
-if(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+if(APPLE)
+	set(LIB_TYPE "SHARED")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+	set(metasim_LIBRARY "${metasim_DIR}/src/libmetasim.dylib")
+	
+elseif(UNIX)
+	set(LIB_TYPE "SHARED")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+	set(metasim_LIBRARY "${metasim_DIR}/src/libmetasim.so")
 endif()
-# MSVC does not require any special flags
 
 # include dirs
 include_directories(.)
