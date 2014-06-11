@@ -30,7 +30,7 @@ elseif(WIN32)
 endif()
 
 # Create a library called "rtlib" which includes the source files.
-add_library(rtlib ${LIB_TYPE} bwi.cpp capacitytimer.cpp cbserver.cpp cpu.cpp 
+add_library(rtlib ${LIB_TYPE} capacitytimer.cpp cbserver.cpp cpu.cpp 
   edfsched.cpp exeinstr.cpp fcfsresmanager.cpp feedback.cpp feedbacktest.cpp 
   fifosched.cpp fpsched.cpp grubserver.cpp interrupt.cpp jtrace.cpp 
   kernel.cpp kernevt.cpp load.cpp mrtkernel.cpp piresman.cpp pollingserver.cpp 
