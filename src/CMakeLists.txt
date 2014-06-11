@@ -5,8 +5,7 @@ include_directories(${metasim_INCLUDE_DIRS})
 # Environment-based settings.
 if(APPLE)
 	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
-	
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")	
 	if(EXISTS "${metasim_DIR}/libmetasim.dylib")
 		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/libmetasim.dylib")
 	elseif(EXISTS "${metasim_DIR}/Debug/libmetasim.dylib")
@@ -21,6 +20,7 @@ elseif(UNIX)
 	set(metasim_LIBRARY "${metasim_DIR}/libmetasim.so")
 	
 elseif(WIN32)
+	set(LIB_TYPE "STATIC")
 	if(EXISTS "${metasim_DIR}/Debug/metasim.lib")
 		set(metasim_LIBRARY "${metasim_DIR}/Debug/metasim.lib")
 	elseif(EXISTS "${metasim_DIR}/Release/metasim.lib")
