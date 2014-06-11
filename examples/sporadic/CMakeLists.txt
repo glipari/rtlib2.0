@@ -1,34 +1,10 @@
-set(metasim_INCLUDE_DIRS "${metasim_DIR}/../src")
-
-# Add defs for the compiler
-if(APPLE)
-	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
-	set(metasim_LIBRARY "${metasim_DIR}/src/libmetasim.dylib")
-	
-elseif(UNIX)
-	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
-	set(metasim_LIBRARY "${metasim_DIR}/src/libmetasim.so")
-endif()
-
-# include dirs
-include_directories(.)
-include_directories(${metasim_INCLUDE_DIRS})
-include_directories(../../src)
+# Include Environment-based settings.
+include(${CMAKE_CURRENT_DOURCE_DIR}../common_settings.txt)
 
 # Create the executable.
-# The extension is already found. Any number of sources could be listed here.
-if(WIN32)
 add_executable(spsl spsl.cpp)
 add_executable(sprunt_example1 sprunt_example1.cpp)
-elseif(UNIX)
-add_executable(spsl spsl.cpp)
-add_executable(sprunt_example1 sprunt_example1.cpp)
-else()
-message( FATAL_ERROR "Unsupported environment (!?)." )
-endif()
 
-# Indicate that the executable needs metasim and rtlib library
+# Indicate that the executable needs metasim and rtlib library.
 target_link_libraries( spsl rtlib )
-target_link_libraries( sprunt_example1 rtlib )
+target_link_libraries( sprunt_example1 rtlib ${metasim_LIBRARY} )

@@ -1,6 +1,7 @@
-# Include dirs.
+# Add include directory
 include_directories(.)
-include_directories(../src)
+include_directories(../../src)
+set(metasim_INCLUDE_DIRS "${metasim_DIR}/../../src")
 include_directories(${metasim_INCLUDE_DIRS})
 
 # Environment-based settings.
@@ -30,8 +31,3 @@ elseif(WIN32)
 		
 endif()
 
-# Create the executable.
-add_executable(test test_main.cpp cbs.cpp)
-
-# Indicate that rtlib need rtlib library.
-target_link_libraries(test rtlib ${metasim_LIBRARY})
