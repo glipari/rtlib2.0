@@ -16,39 +16,49 @@
 
 namespace RTSim {
 
-  using namespace std;
-  using namespace MetaSim;
+    using namespace std;
+    using namespace MetaSim;
 
-  void Timer::newRun() {
-    onTrigger();
-  };
+    Timer::Timer(const std::string &n, int) : Entity(n), _triggerEvt(this, &Timer::onTrigger, p) 
+    {
+    }
 
-  void Timer::endRun() {
-    _triggerEvt.drop();
-  }
+    void Timer::newRun() 
+    {
+	onTrigger();
+    };
 
-  void Timer::onTrigger() {
-    DBGENTER(_TIMER_DBG_LEV);
+    void Timer::endRun() {
+	_triggerEvt.drop();
+    }
 
-    _triggerEvt.drop();
-    lastTrigger = SIMUL.getTime();
-    action();
+    void Timer::onTrigger() {
+	DBGENTER(_TIMER_DBG_LEV);
 
-    DBGPRINT("Timer fired at "<<lastTrigger);
+	_triggerEvt.drop();
+	lastTrigger = SIMUL.getTime();
+	action();
 
-    reArm();
+	DBGPRINT("Timer fired at "<<lastTrigger);
+
+	reArm();
 
     
-  }
+    }
 
-  void PeriodicTimer::reArm() {
-    Tick t = SIMUL.getTime();
-    _triggerEvt.post(t+_period);
-    DBGENTER(_TIMER_DBG_LEV);
-    DBGPRINT_2("Timer rearmed at ", (t+_period));
+    PeriodicTimer::PeriodicTimer(Tick p, const std::string &n= "", int prio = 16) 
+	: Timer(n,prio), _period(p) 
+    {
+    }
+
+    void PeriodicTimer::reArm() {
+	Tick t = SIMUL.getTime();
+	_triggerEvt.post(t+_period);
+	DBGENTER(_TIMER_DBG_LEV);
+	DBGPRINT_2("Timer rearmed at ", (t+_period));
     
 
-  }
-  void PeriodicTimer::action() {};
+    }
+    void PeriodicTimer::action() {};
 
 }

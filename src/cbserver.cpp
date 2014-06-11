@@ -11,18 +11,20 @@ namespace RTSim {
         Server(name, s),
         Q(q),
         P(p),
-	HR(HR),
-        cap(0),
 	d(d),
+        cap(0),
 	last_time(0),
-        _replEvt(Event::_DEFAULT_PRIORITY - 1),
+	HR(HR),
+        _replEvt(this, &CBServer::onReplenishment, 
+		 Event::_DEFAULT_PRIORITY - 1),
+	_idleEvt(this, &CBServer::onIdle),
         vtime(),
 	idle_policy(ORIGINAL)
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT(s);
-        register_handler(_replEvt, this, &CBServer::onReplenishment); 
-	register_handler(_idleEvt, this, &CBServer::onIdle); 
+        // register_handler(_replEvt, this, &CBServer::onReplenishment); 
+	// register_handler(_idleEvt, this, &CBServer::onIdle); 
     }
 
     void CBServer::newRun()

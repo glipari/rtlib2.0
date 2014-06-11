@@ -15,9 +15,7 @@
 #define __TIMER_HPP__
 
 #include <simul.hpp>
-#include <event.hpp>
-
-#include <abstask.hpp>
+#include <gevent.hpp>
 
 #define _TIMER_DBG_LEV "Timer"
 
@@ -25,34 +23,26 @@ namespace RTSim {
 
   using namespace MetaSim;
 
-  class Timer : public Entity {
-  public:
-    class TimerEvt : public MetaSim::Event {
-      Timer * _timer;
+    class Timer : public Entity {
     public:
-      TimerEvt(Timer * t, int p) : MetaSim::Event(p), _timer(t) {};
-      virtual void doit() {
-	_timer->onTrigger();
-      };
-    } _triggerEvt;
-    Tick lastTrigger; //Instant of the last trigger event 
-  public:
-    Timer(char *n = "", int p = 16) : Entity(n), _triggerEvt(this,p) {};
-    virtual void reArm()=0;
-    virtual void action() = 0;
-    virtual void onTrigger();
-    virtual void newRun();
-    virtual void endRun();
-  };
+	GEvent<Timer> _triggerEvt;
+	Tick lastTrigger; //Instant of the last trigger event 
+    public:
+	Timer(const std::string &n = "", int p = 16);
+	virtual void reArm() = 0;
+	virtual void action() = 0;
+	virtual void onTrigger();
+	virtual void newRun();
+	virtual void endRun();
+    };
 
-  class PeriodicTimer : public Timer {
-    Tick _period;
-  public:
-    PeriodicTimer(Tick p, char * n="",int prio = 16) 
-      :Timer(n,prio), _period(p) {}
-    virtual void reArm();
-    virtual void action();
-  };
+    class PeriodicTimer : public Timer {
+	Tick _period;
+    public:
+	PeriodicTimer(Tick p, const std::string &n= "", int prio = 16); 
+	virtual void reArm();
+	virtual void action();
+    };
 
 } // RTSim
 

@@ -36,15 +36,6 @@ namespace RTSim {
     {
 	assert(status == RUNNING && der != 0);
 	return Tick::floor(double(v - get_value()) / der);
-	// }
-	// else {
-	//     stringstream str;
-	//     str << "Time: " << SIMUL.getTime() << endl;
-	//     str << "Status: " << status << " -- intercept: " << double(v - get_value()) / der << endl; 
-	//     cout << str.str();
-	//     assert(0);
-	//     return 0;
-	// }
     }
 
     Tick CapacityTimer::get_value() const

@@ -21,8 +21,8 @@ namespace RTSim {
         void set_value(const Tick &v);
 
 	/** 
-	    Returns how much time from now it will take for the this
-	    times to reach value v.
+	    Returns how much time from now it will take for this timer
+	    to reach value v.
 	 */
         Tick get_intercept(const Tick &v) const;
 
