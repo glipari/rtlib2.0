@@ -136,7 +136,6 @@ namespace RTSim {
 
         AbstractFeedbackModule *feedback;
 
-
     public:
         // events need to be public to avoid an excessive fat interface
         // this is especially true when considering the probing mechanism
@@ -180,7 +179,7 @@ namespace RTSim {
         friend class DeadEvt;
 
         /**
-           This event handler is invoked every time and errival event 
+           This event handler is invoked every time an errival event 
            is triggered. 
        
            @todo to be removed (and substitued by activate())
@@ -460,7 +459,7 @@ namespace RTSim {
             Returns the kernel that contains this task. Can return 0
             if this taks does not belong to any kernel.
         */
-        AbsKernel *getKernel() { return _kernel; }//->getKernel(); }
+        AbsKernel *getKernel() { return _kernel; }
 
         /** 
             Returns true if the task is active.
@@ -486,7 +485,6 @@ namespace RTSim {
         Tick getRelDline() const {return _rdl;}
 
         void setRelDline(const Tick& dl) {_rdl = dl;}
-
 
         /** 
             Returns a pointer to the CPU on which this task is executing.
@@ -537,6 +535,7 @@ namespace RTSim {
            Sets the feedback module for this task (optional, by
            default no feedback is needed).
          */
+
         void setFeedbackModule(AbstractFeedbackModule *afm);
 
         /** 
@@ -554,19 +553,13 @@ namespace RTSim {
         */ 
         void refreshExec(double oldSpeed, double newSpeed);
 
-        int getTaskNumber() const
-            {
-                return getID(); 
-            }	
+        int getTaskNumber() const { return getID();}	
 
-        void setAbort(bool f) { 
-            deadEvt.setAbort(f); 
-        }
-
+        void setAbort(bool f) { deadEvt.setAbort(f); }
     };
 
     /// returns the task name, or "(nil)" if the pointer does not point 
-    /// to an entity
+    /// to a task entity
     std::string taskname(const AbsRTTask *t);
 
 } // namespace RTSim
