@@ -32,10 +32,6 @@
 
 namespace RTSim {
 
-    //using namespace std;
-    //using namespace MetaSim;
-    //using namespace parse_util;
-
     /* Forward declaration... */
     class Instr;
     class InstrExc;
@@ -66,8 +62,13 @@ namespace RTSim {
 
     */
     class Task : public Entity, virtual public AbsRTTask {
+    private:
+	// Hide copy constructor and assignment, tasks cannot be copied
+	Task(const Task &);
+	Task & operator=(const Task &);
+
     protected:
-	MetaSim::RandomVar *int_time;
+	MetaSim::RandomVar *int_time;  // The task is owner of this varible
         MetaSim::Tick lastArrival;     // The arrival of the last instance!
         MetaSim::Tick phase;           // Initial phasing for first arrival
         MetaSim::Tick arrival;         // Arrival time of the current (last) instance
@@ -88,8 +89,6 @@ namespace RTSim {
         AbsKernel *_kernel;
 
         MetaSim::Tick _lastSched;
-
-        // from old RTTask...
         MetaSim::Tick _dl;
         MetaSim::Tick _rdl;
 
@@ -138,37 +137,36 @@ namespace RTSim {
         friend class DeadEvt;
 
         /**
-           This event handler is invoked every time an errival event 
+           This event handler is invoked every time an arrival event 
            is triggered. 
-       
-           @todo to be removed (and substitued by activate())
-        */
-        virtual void onArrival(MetaSim::Event *);
+	*/
+        void onArrival(MetaSim::Event *);
 
         /**
            This event handler is invoked when a task completes an instance.
            It resets the executed time counter, and the instruction counter.
-       
+	   
            @todo change its name into onInstanceEnd().
         */
-        virtual void onEnd(MetaSim::Event *);
+        void onEndInstance(MetaSim::Event *);
         
         /**
-         This event handler is invoked when a task instance has been killed.
+	   This event handler is invoked when a task instance has been killed.
+	   Similar to onEndInstance, but the endEvt is not processed. 
          */
-        virtual void onKill(MetaSim::Event *);
+        void onKill(MetaSim::Event *);
 
         /**
            This event handler is invoked everytime the task is scheduled (i.e. 
            dispatched by the kernel). 
         */
-        virtual void onSched(MetaSim::Event *);
+        void onSched(MetaSim::Event *);
 
         /**
            This event handler is invoked everytime the task is suspended 
            by the kernel or by another entity, or it suspends itself. 
         */
-        virtual void onDesched(MetaSim::Event *);
+        void onDesched(MetaSim::Event *);
 
         /**
            This event handler is ivoked everytime a buffered arrival has 
@@ -181,7 +179,7 @@ namespace RTSim {
            It is used maily for tracing reason (there is not explicit need
            for an event here).
         */
-        virtual void onFakeArrival(MetaSim::Event *);
+        void onFakeArrival(MetaSim::Event *);
 
         /** 
             Reactivates the task. This method is used to implement a
@@ -192,31 +190,28 @@ namespace RTSim {
             @todo re-think this function to implement a different kind of
             task.
         */
-        virtual void reactivate();
+        void reactivate();
 
         /** 
             Handle arrival. This is the true arrival event handler.
 
             @todo simplify the arrival handling, by reducing the number of
             methods to be invoked.
-	
-            @todo this function should set arrival = true arrival time, and not 
-            arrival = SIMUL.getTime() as it happens now!
-        */
-        virtual void handleArrival(Tick arrival);
+	*/
+        void handleArrival(Tick arrival);
 
         /** handles buffered arrivals:  inserts an arrival in the buffer */
-        virtual void buffArrival();
+        void buffArrival();
 
         /** handles buffered arrivals: removes an arrival from the buffer */
-        virtual void unbuffArrival();
+        void unbuffArrival();
 
         /** handles buffered arrivals: returns an arrival from the buffer */
-        virtual Tick getBuffArrival();
+        Tick getBuffArrival();
 
         /** handles buffered arrivals: returns true if there is a buffered
             arrival */
-        virtual bool chkBuffArrival() const;
+        bool chkBuffArrival() const;
 
         /******************************************************************/
         

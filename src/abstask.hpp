@@ -34,57 +34,57 @@ namespace RTSim {
       Therefore, this interface defines all methods that are essential
       for a kernel to schedule a task.
   */
-  class AbsTask {
-  public:
-    /**
-       Virtual destructor. It avoids a warning for the presence of
-       virtual functions.
-     */
-    virtual ~AbsTask() {}
+    class AbsTask {
+    public:
+	/**
+	   Virtual destructor. It avoids a warning for the presence of
+	   virtual functions.
+	*/
+	virtual ~AbsTask() {}
 
-    /**
-       Called when the task is scheduled to execute.
-     */
-    virtual void schedule()   = 0;
+	/**
+	   Called when the task is scheduled to execute.
+	*/
+	virtual void schedule()   = 0;
 
-    /**
-     * Called when the task is preempted.
-     */
-    virtual void deschedule() = 0;
+	/**
+	 * Called when the task is preempted.
+	 */
+	virtual void deschedule() = 0;
 
-    /**
-       Activates the task. Different from calling onArrival, because
-       this should post a event, rather than directly calling the
-       function. */
-    virtual void activate() = 0; 
+	/**
+	   Activates the task. Different from calling onArrival, because
+	   this should post a event, rather than directly calling the
+	   function. */
+	virtual void activate() = 0; 
 
-    /// returns true if the task is active
-    virtual bool isActive(void) const = 0;
+	/// returns true if the task is active
+	virtual bool isActive(void) const = 0;
 
-    /// returns true if the task is executing
-    virtual bool isExecuting(void) const = 0;
+	/// returns true if the task is executing
+	virtual bool isExecuting(void) const = 0;
 
-    /// get current arrival time of the job
-    virtual Tick getArrival(void) const = 0;
+	/// get current arrival time of the job
+	virtual Tick getArrival(void) const = 0;
     
-    /// get arrival time of the last executed job
-    virtual Tick getLastArrival(void) const = 0;
+	/// get arrival time of the last executed job
+	virtual Tick getLastArrival(void) const = 0;
 
-    /// set the kernel for this task
-    virtual void setKernel(AbsKernel*) = 0;
+	/// set the kernel for this task
+	virtual void setKernel(AbsKernel*) = 0;
 
-    /// get the kernel for this task
-    virtual AbsKernel * getKernel() = 0;
+	/// get the kernel for this task
+	virtual AbsKernel * getKernel() = 0;
 
-    /** It refreshes the state of the executing task 
-     *  when a change of the CPU speed occurs. 
-     */ 
-    virtual void refreshExec(double oldSpeed, double newSpeed) = 0;
+	/** It refreshes the state of the executing task 
+	 *  when a change of the CPU speed occurs. 
+	 */ 
+	virtual void refreshExec(double oldSpeed, double newSpeed) = 0;
 
-    /// returns the wcet for this task, if available! otherwise returns 0.
-    virtual Tick getMaxExecutionTime() const { return 0; }
+	/// returns the wcet for this task, if available! otherwise returns 0.
+	virtual Tick getMaxExecutionTime() const { return 0; }
 
-  };
+    };
 
   /**
      \ingroup task

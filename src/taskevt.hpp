@@ -99,9 +99,8 @@ namespace RTSim {
     class FakeArrEvt: public TaskEvt
     {
     public:
-        FakeArrEvt(Task* t) :TaskEvt(t) {setPriority(_DEFAULT_PRIORITY - 1);}
+        FakeArrEvt(Task* t) :TaskEvt(t) { setPriority(_DEFAULT_PRIORITY - 1); }
         virtual void doit();
-
     };
 
     /** 
@@ -132,7 +131,7 @@ namespace RTSim {
         static const int _DEAD_EVT_PRIORITY = EndEvt::_END_EVT_PRIORITY + 3; 
 
         DeadEvt(Task* t, bool abort, bool kill)
-            :TaskEvt(t, _DEAD_EVT_PRIORITY), _abort(abort), _kill(kill) {}
+            : TaskEvt(t, _DEAD_EVT_PRIORITY), _abort(abort), _kill(kill) {}
 
         virtual void doit();  
         void setAbort(bool f) {_abort = f;}

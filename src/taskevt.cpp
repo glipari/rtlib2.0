@@ -29,7 +29,7 @@ namespace RTSim {
     
     void EndEvt::doit()
     {
-        _task->onEnd(this);
+        _task->onEndInstance(this);
     }
     
     void KillEvt::doit()

@@ -23,8 +23,6 @@
 #include <instr.hpp>
 #include <task.hpp>
 
-
-
 namespace RTSim {
     
     using namespace std;
@@ -35,8 +33,7 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         DBGPRINT("Destructor of class Task");
-        discardInstrs(true);
-        
+        discardInstrs(true);        
     }
     
     Task::Task(RandomVar *iat, Tick rdl, Tick ph,
@@ -243,21 +240,7 @@ namespace RTSim {
         instrQueue.push_back(instr);
         DBGTAG(_TASK_DBG_LEV, "Task::addInstr() : Instruction added");
     }
-    
-    /*  void Task::removeInstr(Instr *instr) throw(NoSuchInstr)
-     {
-     InstrIterator p = instrQueue.begin();
-     
-     while (p != instrQueue.end() || (*p != instr)) {
-     p++;
-     }
-     
-     if (p == instrQueue.end()) {
-     throw NoSuchInstr();
-     }
-     instrQueue.erase(p);
-     }*/
-    
+        
     void Task::discardInstrs(bool selfDestruct)
     {
         // Unset all the Instructions
@@ -278,7 +261,6 @@ namespace RTSim {
     void Task::onArrival(Event *e)
     {
         DBGENTER(_TASK_DBG_LEV);
-        //DBGPRINT_3("workaround--> ","arrEvt for task ", getName());
         
         if (active == false) {
             // Standard Task Arrival: do standard
@@ -299,11 +281,10 @@ namespace RTSim {
             
             buffArrival();
         }
-        
         reactivate();
     }
     
-    void Task::onEnd(Event *e)
+    void Task::onEndInstance(Event *e)
     {
         DBGENTER(_TASK_DBG_LEV);
         
@@ -346,8 +327,6 @@ namespace RTSim {
             
             DBGPRINT("[Fake Arrival generated]");
         }
-        
-        
     }
     
     void Task::onKill(Event *e)
@@ -386,8 +365,6 @@ namespace RTSim {
             
             DBGPRINT("[Fake Arrival generated]");
         }
-        
-        
     }
     
     void Task::onSched(Event *e)
@@ -415,8 +392,6 @@ namespace RTSim {
         
         // from Task ...
         deadEvt.setCPU(cpu_index);
-        
-        
     }
     
     void Task::onDesched(Event *e)
