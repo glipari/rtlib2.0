@@ -84,9 +84,10 @@ namespace RTSim {
 	recharging_time(0),
 	cap(),
 	vtime(),
-	supervisor(0)
+	supervisor(0), 
+	_idleEvt(this, &Grub::onIdle)
     {
-	register_handler(_idleEvt, this, &Grub::onIdle); 
+	//register_handler(_idleEvt, this, &Grub::onIdle); 
     }
 
     Grub::~Grub() {}

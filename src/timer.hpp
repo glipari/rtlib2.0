@@ -21,25 +21,25 @@
 
 namespace RTSim {
 
-  using namespace MetaSim;
+    //using namespace MetaSim;
 
-    class Timer : public Entity {
+    class Timer : public MetaSim::Entity {
     public:
-	GEvent<Timer> _triggerEvt;
-	Tick lastTrigger; //Instant of the last trigger event 
+	MetaSim::GEvent<Timer> _triggerEvt;
+	MetaSim::Tick lastTrigger; //Instant of the last trigger event 
     public:
 	Timer(const std::string &n = "", int p = 16);
 	virtual void reArm() = 0;
 	virtual void action() = 0;
-	virtual void onTrigger();
+	virtual void onTrigger(MetaSim::Event *);
 	virtual void newRun();
 	virtual void endRun();
     };
 
     class PeriodicTimer : public Timer {
-	Tick _period;
+	MetaSim::Tick _period;
     public:
-	PeriodicTimer(Tick p, const std::string &n= "", int prio = 16); 
+	PeriodicTimer(MetaSim::Tick p, const std::string &n= "", int prio = 16); 
 	virtual void reArm();
 	virtual void action();
     };

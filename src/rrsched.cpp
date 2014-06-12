@@ -30,11 +30,11 @@ namespace RTSim {
     }
 
     RRScheduler::RRScheduler(int defSlice) : 
-        Scheduler(), defaultSlice(defSlice) 
+        Scheduler(), defaultSlice(defSlice), _rrEvt(this, &RRScheduler::round)
     {
         DBGENTER(_RR_SCHED_DBG_LEV);
         DBGPRINT_2("DEFAULT SLICE = ", defaultSlice);
-        register_handler(_rrEvt, this, &RRScheduler::round);
+        //register_handler(_rrEvt, this, &RRScheduler::round);
     }
 
 

@@ -35,19 +35,20 @@ namespace RTSim {
   using namespace std;
   using namespace MetaSim;
 
-  Interrupt::Interrupt(RandomVar *iat, 
-		       int burstperiod, 
-		       RandomVar *burstlenght, const char *name) :
-    Entity(name),
-    int_time(iat),
-    bp(burstperiod),
-    burst_lenght(burstlenght),
-    count(0),
-    max_act(0)
-  {
-    if (burst_lenght == NULL) burst_lenght = new DeltaVar(1);   
-    register_handler(triggerEvt, this, &Interrupt::onTrigger);
-  }
+    Interrupt::Interrupt(RandomVar *iat, 
+			 int burstperiod, 
+			 RandomVar *burstlenght, const char *name) :
+	Entity(name),
+	int_time(iat),
+	bp(burstperiod),
+	burst_lenght(burstlenght),
+	count(0),
+	max_act(0),
+	triggerEvt(this, &Interrupt::onTrigger)
+    {
+	if (burst_lenght == NULL) burst_lenght = new DeltaVar(1);   
+	//register_handler(triggerEvt, this, &Interrupt::onTrigger);
+    }
 
   Interrupt::~Interrupt()
   {

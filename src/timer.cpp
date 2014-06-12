@@ -19,20 +19,21 @@ namespace RTSim {
     using namespace std;
     using namespace MetaSim;
 
-    Timer::Timer(const std::string &n, int) : Entity(n), _triggerEvt(this, &Timer::onTrigger, p) 
+    Timer::Timer(const std::string &n, int p) : 
+	Entity(n), _triggerEvt(this, &Timer::onTrigger, p) 
     {
     }
 
     void Timer::newRun() 
     {
-	onTrigger();
-    };
+	onTrigger(NULL);
+    }
 
     void Timer::endRun() {
 	_triggerEvt.drop();
     }
 
-    void Timer::onTrigger() {
+    void Timer::onTrigger(MetaSim::Event *) {
 	DBGENTER(_TIMER_DBG_LEV);
 
 	_triggerEvt.drop();
@@ -42,12 +43,10 @@ namespace RTSim {
 	DBGPRINT("Timer fired at "<<lastTrigger);
 
 	reArm();
-
-    
     }
 
-    PeriodicTimer::PeriodicTimer(Tick p, const std::string &n= "", int prio = 16) 
-	: Timer(n,prio), _period(p) 
+    PeriodicTimer::PeriodicTimer(Tick p, const std::string &n, int prio) 
+	: Timer(n, prio), _period(p) 
     {
     }
 

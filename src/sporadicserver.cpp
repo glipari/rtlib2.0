@@ -16,15 +16,17 @@ namespace RTSim {
         recharging_time(0),
         repl_queue(),
         capacity_queue(),
-        _replEvt(Event::_DEFAULT_PRIORITY - 1),
+        _replEvt(this, &SporadicServer::onReplenishment, 
+		 Event::_DEFAULT_PRIORITY - 1),
+	_idleEvt(this, &SporadicServer::onIdle),
         vtime()
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT(s);
         dline = p;
 
-        register_handler(_replEvt, this, &SporadicServer::onReplenishment); 
-        register_handler(_idleEvt, this, &SporadicServer::onIdle); 
+        // register_handler(_replEvt, this, &SporadicServer::onReplenishment); 
+        // register_handler(_idleEvt, this, &SporadicServer::onIdle); 
     }
 
     void SporadicServer::newRun()

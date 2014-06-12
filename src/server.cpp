@@ -29,10 +29,12 @@ namespace RTSim {
         kernel(0),
         sched_(0),
         currExe_(0),
-        _bandExEvt(Event::_DEFAULT_PRIORITY + 4),
-        _dlineMissEvt(Event::_DEFAULT_PRIORITY + 6),
-        _rechargingEvt(Event::_DEFAULT_PRIORITY - 1),
-	_dispatchEvt(Event::_DEFAULT_PRIORITY + 5)
+        _bandExEvt(this, &Server::onBudgetExhausted, Event::_DEFAULT_PRIORITY + 4),
+        _dlineMissEvt(this, &Server::onDlineMiss, Event::_DEFAULT_PRIORITY + 6),
+        _rechargingEvt(this, &Server::onRecharging, Event::_DEFAULT_PRIORITY - 1),
+	_schedEvt(this, &Server::onSched),
+	_deschedEvt(this, &Server::onDesched),
+	_dispatchEvt(this, &Server::onDispatch, Event::_DEFAULT_PRIORITY + 5)
     {
         DBGENTER(_SERVER_DBG_LEV);
         string s_name = parse_util::get_token(s);
@@ -51,12 +53,12 @@ namespace RTSim {
         sched_->setKernel(this);
 
         // register all event handlers
-        register_handler(_bandExEvt, this, &Server::onBudgetExhausted); 
-        register_handler(_dlineMissEvt, this, &Server::onDlineMiss);
-        register_handler(_rechargingEvt, this, &Server::onRecharging); 
-        register_handler(_schedEvt, this, &Server::onSched); 
-        register_handler(_deschedEvt, this, &Server::onDesched); 
-        register_handler(_dispatchEvt, this, &Server::onDispatch); 
+        //register_handler(_bandExEvt, this, &Server::onBudgetExhausted); 
+        //register_handler(_dlineMissEvt, this, &Server::onDlineMiss);
+        //register_handler(_rechargingEvt, this, &Server::onRecharging); 
+        //register_handler(_schedEvt, this, &Server::onSched); 
+        //register_handler(_deschedEvt, this, &Server::onDesched); 
+        //register_handler(_dispatchEvt, this, &Server::onDispatch); 
     }
 
     Server::~Server()
