@@ -17,16 +17,19 @@
 #include <regvar.hpp>
 #include <factory.hpp>
 #include <simul.hpp>
+#include <strtoken.hpp>
 
 #include <abskernel.hpp>
 #include <instr.hpp>
 #include <task.hpp>
 
 
+
 namespace RTSim {
     
     using namespace std;
     using namespace MetaSim;
+    using namespace parse_util;
     
     Task::~Task()
     {
@@ -541,7 +544,7 @@ namespace RTSim {
         return tt;
     }
     
-    void Task::insertCode(const string &code) throw(ParseExc)
+    void Task::insertCode(const string &code) //throw(ParseExc)
     {
         DBGENTER(_TASK_DBG_LEV);
         

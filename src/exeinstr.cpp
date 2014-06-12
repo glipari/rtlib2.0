@@ -29,6 +29,7 @@ namespace RTSim {
 
     using namespace MetaSim;
     using namespace std;
+    using namespace parse_util;
 
     ExecInstr::ExecInstr(Task *f, RandomVar *c, char *n) : 
         Instr(f, n), cost(c), _endEvt(this) 

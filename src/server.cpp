@@ -6,10 +6,11 @@
 #include <kernel.hpp>
 #include <strtoken.hpp>
 
-using namespace MetaSim;
-using namespace std;
 
 namespace RTSim {
+    using namespace MetaSim;
+    using namespace std;
+    using namespace parse_util;
 
     string Server::status_string[] = {"IDLE", 
                                       "READY", 

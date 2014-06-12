@@ -15,7 +15,6 @@
 #define __TASK_HPP__
 
 /* Headers from MetaSim */
-#include <baseexc.hpp>
 #include <entity.hpp>
 #include <gevent.hpp>
 #include <randomvar.hpp>
@@ -27,59 +26,19 @@
 #include <kernel.hpp>
 #include <taskevt.hpp>
 #include <feedback.hpp>
+#include <taskexc.hpp>
 
 #define _TASK_DBG_LEV "Task"
 
 namespace RTSim {
 
-    using namespace std;
-    using namespace MetaSim;
-    using namespace parse_util;
+    //using namespace std;
+    //using namespace MetaSim;
+    //using namespace parse_util;
 
     /* Forward declaration... */
-    class Task;
     class Instr;
     class InstrExc;
-
-    /* Exceptions */
-    class EmptyTask : public BaseExc {
-    public:
-        EmptyTask()
-            :BaseExc("Task witout instructions in queue", "Task", "task.cpp") {}
-    };
-    class KernAlreadySet: public BaseExc {
-    public:
-        KernAlreadySet()
-            :BaseExc("Kernel already set for this task", "Task", "task.cpp") {}
-    };
-    class TaskAlreadyActive: public BaseExc {
-    public:
-        TaskAlreadyActive()
-            :BaseExc("Trying to activate an already active task", "Task", "task.cpp")
-            {}
-    };
-    class NoSuchInstr : public BaseExc {
-    public:
-        NoSuchInstr()
-            :BaseExc("Trying to remove a non existent instruction", "Task",
-                     "task.cpp") {}
-    };
-    class TaskNotActive : public BaseExc {
-    public:
-        TaskNotActive(string msg) :BaseExc(msg, "Task", "task.cpp") {}
-    };
-
-    class TaskNotExecuting : public BaseExc {
-    public:
-        TaskNotExecuting(string msg) :BaseExc(msg, "Task", "task.cpp") {}
-    };
-  
-    class TaskAlreadyExecuting : public BaseExc {
-    public:
-        TaskAlreadyExecuting()
-            :BaseExc("Trying to schedule an already executing task...", "Task",
-                     "task.cpp") {}
-    };
 
     /** 
         \ingroup tasks
@@ -108,31 +67,31 @@ namespace RTSim {
     */
     class Task : public Entity, virtual public AbsRTTask {
     protected:
-        RandomVar *int_time;
-        Tick lastArrival;      // The arrival of the last instance!
-        Tick phase;            // Initial phasing for first arrival
-        Tick arrival;          // Arrival time of the current (last) instance
-        Tick execdTime;        // Actual Real-Time execution of the task
-        Tick _maxC;
-        deque <Tick> arrQueue; // Arrival queue, sorted FIFO
+	MetaSim::RandomVar *int_time;
+        MetaSim::Tick lastArrival;     // The arrival of the last instance!
+        MetaSim::Tick phase;           // Initial phasing for first arrival
+        MetaSim::Tick arrival;         // Arrival time of the current (last) instance
+        MetaSim::Tick execdTime;       // Actual Real-Time execution of the task
+        MetaSim::Tick _maxC;
+	std::deque <MetaSim::Tick> arrQueue; // Arrival queue, sorted FIFO
         int arrQueueSize;      // -1 stands for no-limit
 
         bool active;           // true if the current request has not completed
         bool executing;        // true if the task is currently executing
 
-        typedef vector<Instr *> InstrList;
-        typedef vector<Instr *>::iterator InstrIterator;
-        typedef vector<Instr *>::const_iterator ConstInstrIterator;
+        typedef std::vector<Instr *> InstrList;
+        typedef std::vector<Instr *>::iterator InstrIterator;
+        typedef std::vector<Instr *>::const_iterator ConstInstrIterator;
         InstrList instrQueue;
         InstrIterator actInstr;
 
         AbsKernel *_kernel;
 
-        Tick _lastSched;
+        MetaSim::Tick _lastSched;
 
         // from old RTTask...
-        Tick _dl;
-        Tick _rdl;
+        MetaSim::Tick _dl;
+        MetaSim::Tick _rdl;
 
         AbstractFeedbackModule *feedback;
 
@@ -529,7 +488,7 @@ namespace RTSim {
             Res1; finally, the last instruction has variable execution
             time uniformely distributed between 10 and 20 ticks.
         */
-        void insertCode(const string &code) throw(ParseExc);
+        void insertCode(const string &code); //throw(ParseExc);
 
         /**
            Sets the feedback module for this task (optional, by
