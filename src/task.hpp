@@ -36,6 +36,9 @@ namespace RTSim {
     class Instr;
     class InstrExc;
 
+    // Task states
+    typedef enum { TSK_IDLE, TSK_READY, TSK_EXEC, TSK_BLOCKED } task_state;
+
     /** 
         \ingroup tasks
 
@@ -73,12 +76,14 @@ namespace RTSim {
         MetaSim::Tick phase;           // Initial phasing for first arrival
         MetaSim::Tick arrival;         // Arrival time of the current (last) instance
         MetaSim::Tick execdTime;       // Actual Real-Time execution of the task
-        MetaSim::Tick _maxC;
+        MetaSim::Tick _maxC;           // Maximum computation time 
 	std::deque <MetaSim::Tick> arrQueue; // Arrival queue, sorted FIFO
         int arrQueueSize;      // -1 stands for no-limit
 
-        bool active;           // true if the current request has not completed
-        bool executing;        // true if the task is currently executing
+	task_state state;      // IDLE, READY, EXECUTING, BLOCKED 
+
+        //bool active;           // true if the current request has not completed
+        //bool executing;        // true if the task is currently executing
 
         typedef std::vector<Instr *> InstrList;
         typedef std::vector<Instr *>::iterator InstrIterator;

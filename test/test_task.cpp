@@ -29,7 +29,7 @@ TEST_CASE("Task arrival")
     
     SIMUL.initSingleRun();
     SIMUL.run_to(4);
-    
+
     REQUIRE(t1.getExecTime() == 4);
     REQUIRE(t2.getExecTime() == 0);
     REQUIRE(t3.getExecTime() == 0);    
@@ -92,4 +92,6 @@ TEST_CASE("Task arrival")
     REQUIRE(t1.getDeadline() == 40);
     REQUIRE(t2.getDeadline() == 45);
     REQUIRE(t3.getDeadline() == 50);    
+
+    SIMUL.endSingleRun(); 
 }
