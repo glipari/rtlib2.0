@@ -100,8 +100,8 @@ namespace RTSim {
         AbstractFeedbackModule *feedback;
 
     public:
-        // events need to be public to avoid an excessive fat interface
-        // this is especially true when considering the probing mechanism
+        // Events need to be public to avoid an excessive fat interface.
+        // Rhis is especially true when considering the probing mechanism
         // (for statistical collection and tracing). 
 
         ArrEvt arrEvt;
@@ -117,7 +117,7 @@ namespace RTSim {
          Returns a constant reference to the instruction queue
          (instrQueue)
          */
-        const InstrList& getInstrQueue() {return instrQueue;};
+        const InstrList& getInstrQueue() { return instrQueue; };
         
         /**
          Returns a constant reference to the actual instruction
@@ -126,8 +126,8 @@ namespace RTSim {
         const InstrIterator& getActInstr() {return actInstr;};
         
         /**
-         Reset the instruction queue pointer:
-            actInstr = instrQueue.begin()
+	   Reset the instruction queue pointer:
+	   actInstr = instrQueue.begin()
          */
         void resetInstrQueue();
 
@@ -217,6 +217,10 @@ namespace RTSim {
         /** handles buffered arrivals: returns true if there is a buffered
             arrival */
         bool chkBuffArrival() const;
+
+	// blocking a task: 
+	// I deschedule the task, then it goes into the blocking state. 
+	// It can be unblocked only when an Unblock() is called
 
         /******************************************************************/
         

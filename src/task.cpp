@@ -109,8 +109,6 @@ namespace RTSim {
         schedEvt.drop();
         
         deschedEvt.process();
-        
-        
     }
     
     void Task::setKernel(AbsKernel *k) throw(KernAlreadySet)
@@ -453,10 +451,7 @@ namespace RTSim {
         
         handleArrival(getBuffArrival());
         
-        _kernel->onArrival(this);
-        
-        
-        
+        _kernel->onArrival(this);        
     }
     
     void Task::activate()

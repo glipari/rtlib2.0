@@ -62,11 +62,10 @@ namespace RTSim {
             // Creates a CPU without power saving:
             _cpu = new CPU;
         }
-        
-  
+          
         s->setKernel(this);
     }
-
+    
     RTKernel::~RTKernel()
     {
         DBGENTER(_KERNEL_DBG_LEV);
@@ -85,7 +84,6 @@ namespace RTSim {
         _sched->addTask(&t, params);
     }
 
-
     CPU* RTKernel::getProcessor(const AbsRTTask* t) const
     {
         return _cpu;
@@ -103,12 +101,10 @@ namespace RTSim {
         _sched->insert(task);        
     }
     
-
     AbsRTTask* RTKernel::getCurrExe() const
     {
         return _currExe;
     }
-
 
     void RTKernel::suspend(AbsRTTask *task)
     {
@@ -120,8 +116,6 @@ namespace RTSim {
             task->deschedule();
             _currExe = NULL;
         }
-
-        
     }
 
     void RTKernel::discardTasks(bool f)
@@ -139,14 +133,11 @@ namespace RTSim {
 	_sched->insert(task);
 
 	if(!_isContextSwitching){
-	    dispatch(); 
+	    dispatch();
 	} else {
 	    beginDispatchEvt.drop();
 	    beginDispatchEvt.post(endDispatchEvt.getTime());
 	}
-
-        
-
     }
 
     void RTKernel::onEnd(AbsRTTask *task)
@@ -160,8 +151,6 @@ namespace RTSim {
         _currExe = NULL;
         
         dispatch();
-
-        
     }
 
     void RTKernel::dispatch()
@@ -172,8 +161,6 @@ namespace RTSim {
 
         beginDispatchEvt.drop();
         beginDispatchEvt.post(SIMUL.getTime());
-
-        
     }
 
     void RTKernel::onBeginDispatch(Event* e)
@@ -202,18 +189,12 @@ namespace RTSim {
                     DBGPRINT_2("Now Running: ",
                                taskname(newExe));
         }
-
-        
     }
 
 
     void RTKernel::onEndDispatch(Event* e)
     {
         DBGENTER(_KERNEL_DBG_LEV);
-
-//        AbsRTTask *newExe = _sched->getFirst();
-
-	// we are sure that _currExe is not NULL
 
 	_currExe->schedule();
 
@@ -222,18 +203,13 @@ namespace RTSim {
 
 	_isContextSwitching = false;
         _sched->notify(_currExe);
-
-        
     }
 
 
     void RTKernel::refresh() 
     { 
         DBGENTER(_KERNEL_DBG_LEV);
-
         dispatch();
-
-        
     } 
 
     void RTKernel::setResManager(ResManager* rm)
@@ -251,8 +227,6 @@ namespace RTSim {
         bool ret = _resMng->request(t,r,n);
         if (!ret) 
             dispatch();
-
-        
         return ret;
     } 
 
@@ -271,8 +245,6 @@ namespace RTSim {
 	DBGENTER(_KERNEL_DBG_LEV);
 
        _sched->setThreshold(_currExe, th);
-
-	
     }
 
     int RTKernel::enableThreshold()
@@ -280,9 +252,6 @@ namespace RTSim {
 	DBGENTER(_KERNEL_DBG_LEV);
 
         int tmp = _sched->enableThreshold(_currExe);
-
-	
-
 	return tmp;
     }
 
@@ -291,8 +260,6 @@ namespace RTSim {
 	DBGENTER(_KERNEL_DBG_LEV);
 
         _sched->disableThreshold(_currExe);
-
-	
     }
  
     void RTKernel::printState() const
