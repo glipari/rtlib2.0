@@ -1,10 +1,11 @@
+#include <kernel.hpp>
+#include <task.hpp>
+
 #include "suspend_instr.hpp"
 
 namespace RTSim {
     using namespace std;
     using namespace MetaSim;
-    
-    
 
     SuspendInstr::SuspendInstr(Task *f, Tick d) :
 	Instr(f), 
@@ -16,43 +17,60 @@ namespace RTSim {
 
     SuspendInstr * SuspendInstr::createInstance(vector<string> &par)
     {
-	// TODO
-	return NULL;
+	if (par.size() != 2) throw parse_util::ParseExc("SuspendInstr::createInstance", "Wrong number of arguments"); 
+	
+	Task *t = dynamic_cast<Task *>(Entity::_find(par[1]));
+	Tick d = atoi(par[0].c_str());
+
+	return new SuspendInstr(t, d);
     }
 
     void SuspendInstr::schedule()
     {
-	// TODO
+	suspEvt.process();
     }
 
     void SuspendInstr::deschedule()
     {
-	// TODO
     }
 
     void SuspendInstr::setTrace(Trace *t)
     {
-	// TODO
     }
 
     void SuspendInstr::onSuspend(Event *evt)
     {
-	// TODO
+	RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
+        if (k == 0) {
+            throw BaseExc("SuspendInstr has no kernel set!");
+        }
+	else {
+	    k->suspend(_father);
+	    k->dispatch();
+	}
+	resumeEvt.post(SIMUL.getTime() + delay);
     }
 
     void SuspendInstr::onEnd(Event *evt)
     {
-	// TODO
+	_father->onInstrEnd();
+	RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
+        if (k == 0) {
+            throw BaseExc("SuspendInstr has no kernel set!");
+        }
+	else k->activate(_father);
+	k->dispatch();
     }
     
     void SuspendInstr::newRun()
     {
-	// TODO
+	// nothing to be done
     }
     
     void SuspendInstr::endRun()
     {
-	// TODO
+	suspEvt.drop();
+	resumeEvt.drop();
     }
 
 }

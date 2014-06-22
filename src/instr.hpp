@@ -74,17 +74,12 @@ namespace RTSim {
 
        @todo Implement labels, and non-sequential constructs.
     */
-    class Instr: public Entity
-    {
+    class Instr: public Entity {
     protected:
         Task* _father;
-
     public:
-
         typedef string BASE_KEY_TYPE;
-
         Instr(Task *f, const std::string &n = "") :Entity(n), _father(f) {}
-
         virtual ~Instr() {}
 
         /** 
@@ -105,7 +100,7 @@ namespace RTSim {
         /** 
          * Called upon the instruction end event
          */
-        virtual void onEnd() = 0;
+        virtual void onEnd() {}
 
         /** 
             This method permits to kill a task which is currently
@@ -159,12 +154,7 @@ namespace RTSim {
         EndInstrEvt(Instr * in) : 
             MetaSim::Event(Event::_DEFAULT_PRIORITY-3), _instr(in) {} 
         virtual void doit();
-        
-	// removed, because not useful
-        //virtual Instr* getInstruction() const;
-
     };
-
 } // namespace RTSim 
 
 #endif

@@ -420,27 +420,21 @@ namespace RTSim {
             DBGPRINT("not active...");
             throw TaskNotActive("onInstrEnd() on a non-active task");
         }
-        if (not isExecuting()) {
-            DBGPRINT("not executing...");
-            throw TaskNotExecuting("OnInstrEnd() on a non executing task");
-        }
-        
+	// this exception conflicts with the implementation of suspendInstr. 
+	// I am removing it for the moment
+        // if (not isExecuting()) {
+        //     DBGPRINT("not executing...");
+        //     throw TaskNotExecuting("OnInstrEnd() on a non executing task");
+        // }
         execdTime += (*actInstr)->getExecTime();
         actInstr++;
         if (actInstr == instrQueue.end()) {
             DBGPRINT("End of instruction list");
-            
-            //            endEvt.process();
-            endEvt.post(SIMUL.getTime());
-        } else {
-            
+	    endEvt.post(SIMUL.getTime());
+        } else if (isExecuting()) {          
             (*actInstr)->schedule();
-            
             DBGPRINT("Next instr scheduled");
-            
         }
-        
-        
     }
     
     void Task::onFakeArrival(Event *e)

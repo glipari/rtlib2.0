@@ -46,13 +46,10 @@ namespace RTSim {
         DBGPRINT("Scheduling WaitInstr named: " << getName());
 
         _endEvt.post(SIMUL.getTime());
-
-        
     }
 
     void WaitInstr::deschedule()
     {
-//         DBGTAG(_INSTR_DBG_LEV,"WaitInstr::deschedule()");
         _endEvt.drop();
     }
 
@@ -75,9 +72,6 @@ namespace RTSim {
         k->requestResource(_father, _res, _numberOfRes);
 
         _waitEvt.process();
-
-        
-
     }
 
     SignalInstr::SignalInstr(Task *f,  const char *r, int nr, char *n)
@@ -103,13 +97,11 @@ namespace RTSim {
 
     void SignalInstr::schedule()
     {
-//         DBGTAG(_INSTR_DBG_LEV,"SignalInstr::schedule()");
         _endEvt.post( SIMUL.getTime()); 
     }
 
     void SignalInstr::deschedule()
     {
-//         DBGTAG(_INSTR_DBG_LEV,"SignalInstr::deschedule()");
         _endEvt.drop();
     }
 
@@ -134,8 +126,6 @@ namespace RTSim {
         }
         
         else k->releaseResource(_father, _res, _numberOfRes); 
-  
-        
     }
 
 }
