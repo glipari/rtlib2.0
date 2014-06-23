@@ -40,25 +40,29 @@ namespace RTSim {
 
     void SuspendInstr::onSuspend(Event *evt)
     {
-	RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
-        if (k == 0) {
-            throw BaseExc("SuspendInstr has no kernel set!");
-        }
-	else {
-	    k->suspend(_father);
-	    k->dispatch();
-	}
+	AbsKernel *k = _father->getKernel();
+	//RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
+        // if (k == 0) {
+        //     throw BaseExc("SuspendInstr has no kernel set!");
+        // }
+	// else {
+	k->suspend(_father);
+	k->dispatch();
+	//}
 	resumeEvt.post(SIMUL.getTime() + delay);
     }
 
     void SuspendInstr::onEnd(Event *evt)
     {
 	_father->onInstrEnd();
-	RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
-        if (k == 0) {
-            throw BaseExc("SuspendInstr has no kernel set!");
-        }
-	else k->activate(_father);
+	//RTKernel *k = dynamic_cast<RTKernel *>(_father->getKernel());
+	AbsKernel *k = _father->getKernel();
+        //if (k == 0) {
+        //    throw BaseExc("SuspendInstr has no kernel set!");
+        //}
+	//else 
+	//k->activate(_father);
+	k->onArrival(_father);
 	k->dispatch();
     }
     

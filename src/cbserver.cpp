@@ -23,8 +23,6 @@ namespace RTSim {
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT(s);
-        // register_handler(_replEvt, this, &CBServer::onReplenishment); 
-	// register_handler(_idleEvt, this, &CBServer::onIdle); 
     }
 
     void CBServer::newRun()
@@ -64,7 +62,7 @@ namespace RTSim {
 
 	if (idle_policy == REUSE_DLINE && SIMUL.getTime() < getDeadline()) {
 	    double diff = double(getDeadline() - SIMUL.getTime()) * 
-		double(Q) / double(P);  
+		double(Q) / double(P);
 	    cap = Tick(std::floor(diff));
 	}
 

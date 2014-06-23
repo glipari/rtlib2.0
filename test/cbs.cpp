@@ -81,3 +81,57 @@ TEST_CASE("CBS algorithm: Original")
 	SIMUL.endSingleRun();
     }
 }
+
+TEST_CASE("Task with suspension")
+{
+    PeriodicTask t1(8, 8, 0, "TaskA");
+    t1.insertCode("fixed(2); suspend(3); fixed(2);");
+    t1.setAbort(false);
+
+    PeriodicTask t2(15, 15, 0, "TaskB");
+    t2.insertCode("fixed(5);");
+    t2.setAbort(false);
+
+    EDFScheduler sched;
+    RTKernel kern(&sched);
+    
+    CBServer serv(4, 8, 8, true,  "server1", "FIFOSched");
+    serv.addTask(t1);
+
+    kern.addTask(t2);
+    kern.addTask(serv);
+
+    SECTION("Original") {
+	serv.set_policy(CBServer::ORIGINAL);
+	SIMUL.initSingleRun();
+	
+	SIMUL.run_to(2);
+	
+	REQUIRE(t1.getExecTime() == 2);
+	REQUIRE(t2.getExecTime() == 0);
+
+	SIMUL.run_to(5);
+	REQUIRE(t1.getExecTime() == 2);
+	REQUIRE(t2.getExecTime() == 3);
+	REQUIRE(serv.getDeadline() == 13);
+	
+	SIMUL.endSingleRun();
+    }
+    SECTION("Reuse deadline") {
+	serv.set_policy(CBServer::REUSE_DLINE);
+	SIMUL.initSingleRun();
+	
+	SIMUL.run_to(2);
+	
+	REQUIRE(t1.getExecTime() == 2);
+	REQUIRE(t2.getExecTime() == 0);
+
+	SIMUL.run_to(5);
+	REQUIRE(t1.getExecTime() == 2);
+	REQUIRE(t2.getExecTime() == 3);
+	REQUIRE(serv.getDeadline() == 8);
+	REQUIRE(serv.get_remaining_budget() == 1);
+	
+	SIMUL.endSingleRun();
+    }
+}
