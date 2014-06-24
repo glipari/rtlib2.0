@@ -24,7 +24,7 @@ namespace RTSim {
         Tick changeBudget(const Tick &n);
 
         Tick changeQ(const Tick &n);
-        virtual Tick getVirtualTime();
+        virtual double getVirtualTime();
 	Tick get_remaining_budget(); 
 
 	policy_t get_policy() const { return idle_policy; }

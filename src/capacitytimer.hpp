@@ -15,10 +15,10 @@ namespace RTSim {
         ~CapacityTimer();
 
         void start(double speed=1.0);
-        Tick stop();
+        double stop();
         status_t get_status() { return status; }
-        Tick get_value() const;
-        void set_value(const Tick &v);
+        double get_value() const;
+        void set_value(const double &v);
 
 	/** 
 	    Returns how much time from now it will take for this timer
@@ -30,7 +30,8 @@ namespace RTSim {
         void endRun();
     private:
         Tick last_time;
-        Tick value;
+        //Tick value;
+	double value;
         status_t status;
         double der;
     };

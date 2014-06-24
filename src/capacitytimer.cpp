@@ -24,10 +24,11 @@ namespace RTSim {
         status = RUNNING;
     }
 
-    Tick CapacityTimer::stop() 
+    double CapacityTimer::stop() 
     {
         assert(status == RUNNING);
-        value += Tick::ceil(double(SIMUL.getTime() - last_time) * der);
+        //value += Tick::ceil(double(SIMUL.getTime() - last_time) * der);
+	value += double(SIMUL.getTime() - last_time) * der;
         status = STOPPED;
         return value;
     }
@@ -35,17 +36,18 @@ namespace RTSim {
     Tick CapacityTimer::get_intercept(const Tick &v) const 
     {
 	assert(status == RUNNING && der != 0);
-	return Tick::floor(double(v - get_value()) / der);
+	return Tick::floor((double(v) - get_value()) / der);
     }
 
-    Tick CapacityTimer::get_value() const
+    double CapacityTimer::get_value() const
     {
         if (status == RUNNING) 
-            return value + Tick::ceil(double(SIMUL.getTime() - last_time) * der);
+            //return value + Tick::ceil(double(SIMUL.getTime() - last_time) * der);
+	    return value + double(SIMUL.getTime() - last_time) * der;
         else return value;
     }
 
-    void CapacityTimer::set_value(const Tick &v)
+    void CapacityTimer::set_value(const double &v)
     {
         assert(status == STOPPED);
         value = v;

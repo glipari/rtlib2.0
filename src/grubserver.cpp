@@ -159,7 +159,7 @@ namespace RTSim {
         status = EXECUTING;
 	Tick extra = supervisor->get_capacity();
 	//cout << "Extra: " << extra << endl;
-	cap.set_value(cap.get_value() + extra);
+	cap.set_value(cap.get_value() + double(extra));
 	startAccounting();
     }
     
@@ -183,8 +183,8 @@ namespace RTSim {
     void Grub::releasing_idle()
     {
 	DBGENTER(_SERVER_DBG_LEV);
-	if (SIMUL.getTime() > vtime.get_value()) {
-	    Tick extra = Tick(getUtil() * double(SIMUL.getTime() - vtime.get_value()));
+	if (double(SIMUL.getTime()) > vtime.get_value()) {
+	    Tick extra = Tick(getUtil() * (double(SIMUL.getTime()) - vtime.get_value()));
 	    supervisor->set_capacity(extra);
 	}
 	status = IDLE;

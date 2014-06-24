@@ -7,6 +7,65 @@
 using namespace MetaSim;
 using namespace RTSim;
 
+TEST_CASE("CBS algorithm: period ratio")
+{
+    PeriodicTask t1(13, 13, 0, "TaskA");
+    t1.insertCode("fixed(5);");
+    t1.setAbort(false);    
+
+    PeriodicTask t2(19, 19, 0, "TaskB");
+    t2.insertCode("fixed(7);");
+    t2.setAbort(false);
+
+    EDFScheduler sched;
+    RTKernel kern(&sched);
+    
+    CBServer serv1(3, 6, 6, true,  "server1", "FIFOSched");
+    serv1.addTask(t1);
+    CBServer serv2(4, 9, 9, true,  "server2", "FIFOSched");
+    serv2.addTask(t2);
+
+    kern.addTask(serv1);
+    kern.addTask(serv2);
+
+    SIMUL.initSingleRun();
+
+    SIMUL.run_to(3);
+    REQUIRE(t1.getExecTime() == 3);
+    REQUIRE(t2.getExecTime() == 0);
+    REQUIRE(serv1.get_remaining_budget() == 3);
+    REQUIRE(serv1.getDeadline() == 12);
+    REQUIRE(serv2.get_remaining_budget() == 4);
+    REQUIRE(serv2.getDeadline() == 9);
+
+    SIMUL.run_to(7);
+    REQUIRE(t1.getExecTime() == 3);
+    REQUIRE(t2.getExecTime() == 4);
+    REQUIRE(serv1.get_remaining_budget() == 3);
+    REQUIRE(serv1.getDeadline() == 12);
+    REQUIRE(serv2.get_remaining_budget() == 4);
+    REQUIRE(serv2.getDeadline() == 18);
+
+    SIMUL.run_to(9);
+    REQUIRE(t1.getExecTime() == 5);
+    REQUIRE(t2.getExecTime() == 4);
+    REQUIRE(serv1.get_remaining_budget() == 1);
+    REQUIRE(serv1.getDeadline() == 12);
+    REQUIRE(serv2.get_remaining_budget() == 4);
+    REQUIRE(serv2.getDeadline() == 18);
+
+    SIMUL.run_to(12);
+    REQUIRE(t1.getExecTime() == 5);
+    REQUIRE(t2.getExecTime() == 7);
+    REQUIRE(serv1.get_remaining_budget() == 1);
+    REQUIRE(serv1.getDeadline() == 12);
+    REQUIRE(serv2.get_remaining_budget() == 1);
+    REQUIRE(serv2.getDeadline() == 18);
+    
+    SIMUL.endSingleRun();
+}
+
+
 TEST_CASE("CBS algorithm: Original")
 {
     PeriodicTask t1(8, 8, 0, "TaskA");

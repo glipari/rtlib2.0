@@ -37,7 +37,7 @@ namespace RTSim {
         Tick changeBudget(const Tick &n);
 
         /** @todo to be completed */
-        virtual Tick getVirtualTime() {return 0;}
+        virtual double getVirtualTime() {return 0;}
 
     protected:
                 

@@ -51,7 +51,7 @@ namespace RTSim {
         Tick changeBudget(const Tick &n);
         
         Tick changeQ(const Tick &n);
-        virtual Tick getVirtualTime();
+        virtual double getVirtualTime();
         
     protected:
         

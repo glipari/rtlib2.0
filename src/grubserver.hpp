@@ -79,7 +79,7 @@ namespace RTSim {
 
         Tick changeBudget(const Tick &new_budget);
 
-	Tick getVirtualTime() { return vtime.get_value(); }
+	double getVirtualTime() { return vtime.get_value(); }
 
 	void newRun();
 	void endRun();

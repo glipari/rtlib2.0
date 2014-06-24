@@ -63,7 +63,7 @@ namespace RTSim {
 	//else 
 	//k->activate(_father);
 	k->onArrival(_father);
-	k->dispatch();
+	//k->dispatch();
     }
     
     void SuspendInstr::newRun()

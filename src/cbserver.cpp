@@ -38,14 +38,14 @@ namespace RTSim {
         vtime.set_value(0);
     }
 
-    Tick CBServer::getVirtualTime()
+    double CBServer::getVirtualTime()
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT("Status = " << status_string[status]);
         if (status == IDLE)
-	  return SIMUL.getTime();
+	    return double(SIMUL.getTime());
         else 
-	  return vtime.get_value();
+	    return vtime.get_value();
     }
 
     void CBServer::endRun()
@@ -77,8 +77,11 @@ namespace RTSim {
 	DBGPRINT_2("Going to active contending ",SIMUL.getTime());
     }
     
-    /*I should compare the actual bandwidth with the assignedserver Q  and postpone deadline and full recharge or just use what is left*/
-    // this should not be necessary. In fact, the releasing state should be the state in which: 
+    /*I should compare the actual bandwidth with the assignedserver Q
+     *  and postpone deadline and full recharge or just use what is
+     *  left*/
+    // this should not be necessary. 
+    // In fact, the releasing state should be the state in which: 
     // 1) the server is not executing
     // 2) the if (condition) is false.
     // in other words, it should be possible to avoid the if.
@@ -122,10 +125,10 @@ namespace RTSim {
       	    vtime.stop();
             _bandExEvt.drop();
         }
-        if (vtime.get_value() <= SIMUL.getTime()) 
+        if (vtime.get_value() <= double(SIMUL.getTime())) 
             status = IDLE;
         else {
-	   _idleEvt.post(vtime.get_value());
+	    _idleEvt.post(Tick::ceil(vtime.get_value()));
             status = RELEASING;
         }        
         DBGPRINT("Status is now XXXYYY " << status_string[status]);
@@ -211,9 +214,9 @@ namespace RTSim {
                 kernel->onArrival(this);
             }
             else if (status != IDLE) {
-                if (SIMUL.getTime() < vtime.get_value()) {
+                if (double(SIMUL.getTime()) < vtime.get_value()) {
                     status = RELEASING;
-                    _idleEvt.post(vtime.get_value());
+                    _idleEvt.post(Tick::ceil(vtime.get_value()));
                 }
                 else status = IDLE;
                 
@@ -298,11 +301,10 @@ namespace RTSim {
 
     Tick CBServer::get_remaining_budget()
     {
-	double dist = std::floor(double(getDeadline() - vtime.get_value()) * 
-				 double(Q) / double(P));
+	double dist = (double(getDeadline()) - vtime.get_value()) * 
+	    double(Q) / double(P) + 0.00000000001;
 	
-	return Tick(dist);
+	return Tick::floor(dist);
     }
-
 }
 

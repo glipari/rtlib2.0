@@ -317,10 +317,10 @@ namespace RTSim {
     public:
         ConsumedPower(CPU* c, string name="") : Measure (name), cpu(c), mytimer(10) 
             {
-                new Particle<Timer::TimerEvt, ConsumedPower>(&mytimer._triggerEvt, this);
+                new Particle<MetaSim::GEvent<Timer>, ConsumedPower>(&mytimer._triggerEvt, this);
             }
 
-        virtual void probe(const Timer::TimerEvt &e)
+        virtual void probe(const MetaSim::GEvent<Timer> &e)
             {
                 Measure::record(cpu->getCurrentPowerConsumption() / 
                                 cpu->getMaxPowerConsumption());
@@ -340,7 +340,7 @@ namespace RTSim {
     public:
         SavedPower(CPU* cpu, string name="") : ConsumedPower<Measure>(cpu,name) {}
 
-        virtual void probe(const Timer::TimerEvt &e)
+        virtual void probe(const MetaSim::GEvent<Timer> &e)
             {
                 record(ConsumedPower<Measure>::cpu->getCurrentPowerSaving());
             }
