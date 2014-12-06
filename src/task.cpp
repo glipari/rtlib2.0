@@ -173,6 +173,23 @@ namespace RTSim {
         if (_dl >= SIMUL.getTime()) deadEvt.post(_dl);
         
     }
+
+    void Task::block() 
+    {
+	// check that the task is not idle and is not already blocked
+	if (state == TSK_IDLE or state == TSK_BLOCKED) 
+	    throw string("Task cannot be blocked, because it is ") + 
+		(state == TSK_IDLE ? "idle" : "blocked");
+	_kernel->suspend(this);
+	state = TSK_BLOCKED;
+	_kernel->dispatch();
+    }
+
+    void Task::unblock()
+    {
+	state = TSK_READY;
+	_kernel->onArrival(this);
+    }
     
     Tick Task::getArrival() const
     {

@@ -328,6 +328,11 @@ namespace RTSim {
         */
         virtual void onInstrEnd();
 
+
+	void block();
+	void unblock();
+
+
         /** 
             Specify that this task has to be traced 
         */
