@@ -365,6 +365,7 @@ namespace RTSim {
             
             DBGPRINT("[Fake Arrival generated]");
         }
+        throw "Unchedulable";
     }
     
     void Task::onSched(Event *e)
@@ -503,7 +504,7 @@ namespace RTSim {
         executing = false;
         active = false;
         
-        killEvt.post(SIMUL.getTime());
+        killEvt.process();
     }
     
     Tick Task::getWCET() const
