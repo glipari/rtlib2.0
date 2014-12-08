@@ -38,32 +38,32 @@ namespace RTSim {
     
     Task::Task(RandomVar *iat, Tick rdl, Tick ph,
                const std::string &name, long qs, Tick maxC)
-    :Entity(name), arrEvt(this), endEvt(this), killEvt(this), schedEvt(this),
-    deschedEvt(this), fakeArrEvt(this), _rdl(rdl), _dl(0),
-    deadEvt(this, false, false),
-    feedback(0)
+	: Entity(name), 
+	  int_time(iat), lastArrival(0), phase(ph), 
+	  arrival(0), execdTime(0), _maxC(maxC), 
+	  arrQueue(), arrQueueSize(qs), 
+	  state(TSK_IDLE),
+	  instrQueue(),
+	  actInstr(),
+	  _kernel(NULL),
+	  _lastSched(0),
+	  _dl(0), _rdl(rdl),
+	  feedback(NULL),
+	  arrEvt(this), endEvt(this), schedEvt(this),
+	  deschedEvt(this), fakeArrEvt(this), killEvt(this), 
+	  deadEvt(this, false, false)
     {
-        int_time = iat;
-        arrQueueSize = qs;
-        phase = ph;
-        _maxC = maxC;
-        instrQueue.reserve(3);		//!!! L
-        _kernel = NULL;
-        
-        _lastSched = 0;
     }
     
-    /* Methods inherited from Entity */
     void Task::newRun(void)
     {
         if (!instrQueue.empty()) {
             actInstr = instrQueue.begin();
         } else throw EmptyTask();
         
-        active = false;
+	state = TSK_IDLE;
         while (chkBuffArrival()) unbuffArrival();
         
-        executing = false;
         lastArrival = arrival = phase;
         if (int_time != NULL) arrEvt.post(arrival);
         _dl = 0;
@@ -85,12 +85,12 @@ namespace RTSim {
     /* Methods from the interface... */
     bool Task::isActive(void) const
     {
-        return active;
+	return state != TSK_IDLE;
     }
     
     bool Task::isExecuting(void) const
     {
-        return executing;
+	return state == TSK_EXEC;
     };
     
     void Task::schedule(void)
@@ -98,9 +98,7 @@ namespace RTSim {
         DBGENTER(_TASK_DBG_LEV);
         DBGPRINT("Scheduling " << getName());
         
-        schedEvt.process();
-        
-        
+        schedEvt.process();        
     }
     
     void Task::deschedule()
@@ -111,8 +109,6 @@ namespace RTSim {
         schedEvt.drop();
         
         deschedEvt.process();
-        
-        
     }
     
     void Task::setKernel(AbsKernel *k) throw(KernAlreadySet)
@@ -158,7 +154,7 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         
-        if (active == true) {
+        if (isActive()) {
             DBGPRINT("Task::handleArrival() Task already active!");
             throw TaskAlreadyActive();
         }
@@ -172,11 +168,27 @@ namespace RTSim {
             (*p)->reset();
             p++;
         }
-        active = true;
-        // from old Task ...
+	state = TSK_READY;
         _dl = getArrival() + _rdl;
         if (_dl >= SIMUL.getTime()) deadEvt.post(_dl);
         
+    }
+
+    void Task::block() 
+    {
+	// check that the task is not idle and is not already blocked
+	if (state == TSK_IDLE or state == TSK_BLOCKED) 
+	    throw string("Task cannot be blocked, because it is ") + 
+		(state == TSK_IDLE ? "idle" : "blocked");
+	_kernel->suspend(this);
+	state = TSK_BLOCKED;
+	_kernel->dispatch();
+    }
+
+    void Task::unblock()
+    {
+	state = TSK_READY;
+	_kernel->onArrival(this);
     }
     
     Tick Task::getArrival() const
@@ -191,7 +203,7 @@ namespace RTSim {
     
     Tick Task::getExecTime() const
     {
-        if (active) {
+        if (isActive()) {
             return execdTime + (*actInstr)->getExecTime();
         } else {
             return execdTime;
@@ -262,7 +274,7 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         
-        if (active == false) {
+        if (!isActive()) {
             // Standard Task Arrival: do standard
             // book-keeping and forward the event to the
             // father
@@ -292,10 +304,10 @@ namespace RTSim {
         deadEvt.drop();
         // normal code
         
-        if (active == false) {
+        if (not isActive()) {
             throw TaskNotActive("OnEnd() on a non-active task");
         }
-        if (executing == false) {
+        if (not isExecuting()) {
             throw TaskNotExecuting("OnEnd() on a non-executing task");
         }
         
@@ -309,8 +321,7 @@ namespace RTSim {
         
         endEvt.setCPU(cpu_index);
         _kernel->onEnd(this);
-        executing = false;
-        active = false;
+	state = TSK_IDLE;
         
         if (feedback) {
             DBGPRINT("Calling the feedback module");
@@ -347,8 +358,7 @@ namespace RTSim {
         
         endEvt.setCPU(cpu_index);
         _kernel->onEnd(this);
-        executing = false;
-        active = false;
+ 	state = TSK_IDLE;
         
         if (feedback) {
             DBGPRINT("Calling the feedback module");
@@ -377,17 +387,17 @@ namespace RTSim {
         DBGPRINT("schedEvt for task " << getName()
                  << " on CPU " << cpu_index);
         
-        if (active == false) {
+        if (not isActive()) {
             throw TaskNotActive("OnSched on a non-active task");
         }
-        if (executing == true) {
+        if (isExecuting()) {
             throw TaskAlreadyExecuting();
         }
         
         schedEvt.setCPU(cpu_index);
         deschedEvt.drop();
         
-        executing = true;
+	state = TSK_EXEC;
         
         (*actInstr)->schedule();
         
@@ -404,10 +414,10 @@ namespace RTSim {
         DBGPRINT("DeschedEvt for task " << getName()
                  << "from CPU" << cpu_index);
         
-        if (active == false) {
+        if (not isActive()) {
             throw TaskNotActive("OnDesched on a non-active task");
         }
-        if (executing == false) {
+        if (not isExecuting()) {
             throw TaskNotExecuting("OnDesched() on a non-executing task");
         }
         
@@ -417,40 +427,32 @@ namespace RTSim {
         
         (*actInstr)->deschedule();
         
-        executing = false;
-        
-        
+	state = TSK_READY;
     }
     
     void Task::onInstrEnd()
     {
         DBGENTER(_TASK_DBG_LEV);
         DBGPRINT("task : " << getName());
-        if (active == false) {
+        if (not isActive()) {
             DBGPRINT("not active...");
             throw TaskNotActive("onInstrEnd() on a non-active task");
         }
-        if (executing == false) {
-            DBGPRINT("not executing...");
-            throw TaskNotExecuting("OnInstrEnd() on a non executing task");
-        }
-        
+	// this exception conflicts with the implementation of suspendInstr. 
+	// I am removing it for the moment
+        // if (not isExecuting()) {
+        //     DBGPRINT("not executing...");
+        //     throw TaskNotExecuting("OnInstrEnd() on a non executing task");
+        // }
         execdTime += (*actInstr)->getExecTime();
         actInstr++;
         if (actInstr == instrQueue.end()) {
             DBGPRINT("End of instruction list");
-            
-            //            endEvt.process();
-            endEvt.post(SIMUL.getTime());
-        } else {
-            
+	    endEvt.post(SIMUL.getTime());
+        } else if (isExecuting()) {          
             (*actInstr)->schedule();
-            
             DBGPRINT("Next instr scheduled");
-            
         }
-        
-        
     }
     
     void Task::onFakeArrival(Event *e)
@@ -461,10 +463,7 @@ namespace RTSim {
         
         handleArrival(getBuffArrival());
         
-        _kernel->onArrival(this);
-        
-        
-        
+        _kernel->onArrival(this);        
     }
     
     void Task::activate()
@@ -484,7 +483,7 @@ namespace RTSim {
         
         DBGENTER(_TASK_DBG_LEV);
         
-        if (active == false) {
+        if (not isActive()) {
             DBGPRINT("not active...");
             throw TaskNotActive("killInstance() on a non-active task");
         }
@@ -501,8 +500,7 @@ namespace RTSim {
             DBGPRINT("[Fake Arrival generated]");
         }
         
-        executing = false;
-        active = false;
+	state = TSK_IDLE;
         
         killEvt.process();
     }

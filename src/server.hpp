@@ -184,7 +184,7 @@ namespace RTSim {
         /**
            Return the server virtual time.
          */
-        virtual Tick getVirtualTime() = 0;
+        virtual double getVirtualTime() = 0;
 
         /**
            Add a new task to this server, with parameters

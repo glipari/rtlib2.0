@@ -41,11 +41,11 @@ namespace RTSim {
         vtime.set_value(0);
     }
 
-    Tick SporadicServer::getVirtualTime()
+    double SporadicServer::getVirtualTime()
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT("Status = " << status_string[status]);
-        if (status == IDLE) return SIMUL.getTime();
+        if (status == IDLE) return double(SIMUL.getTime());
         else return vtime.get_value();
     }
 
@@ -119,10 +119,10 @@ namespace RTSim {
             vtime.stop();
         }
 
-        if (vtime.get_value() <= SIMUL.getTime()) 
+        if (vtime.get_value() <= double(SIMUL.getTime())) 
             status = IDLE;
         else {
-            _idleEvt.post(vtime.get_value());
+            _idleEvt.post(Tick::ceil(vtime.get_value()));
             status = RELEASING;
         }        
         DBGPRINT("Status is now " << status_string[status]);

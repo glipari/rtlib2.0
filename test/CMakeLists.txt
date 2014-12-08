@@ -6,7 +6,7 @@ include_directories(${metasim_INCLUDE_DIRS})
 # Environment-based settings.
 if(APPLE)
 	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
 	
 	if(EXISTS "${metasim_DIR}/libmetasim.dylib")
 		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/libmetasim.dylib")
@@ -18,7 +18,7 @@ if(APPLE)
 	
 elseif(UNIX)
 	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
 	set(metasim_LIBRARY "${metasim_DIR}/libmetasim.so")
 	
 elseif(WIN32)	
@@ -31,7 +31,7 @@ elseif(WIN32)
 endif()
 
 # Create the executable.
-add_executable(test test_main.cpp cbs.cpp test_task.cpp)
+add_executable(test test_main.cpp cbs.cpp test_task.cpp test_mrt.cpp)
 
 # Indicate that rtlib need rtlib library.
 target_link_libraries(test rtlib ${metasim_LIBRARY})

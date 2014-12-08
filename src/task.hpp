@@ -36,6 +36,9 @@ namespace RTSim {
     class Instr;
     class InstrExc;
 
+    // Task states
+    typedef enum { TSK_IDLE, TSK_READY, TSK_EXEC, TSK_BLOCKED } task_state;
+
     /** 
         \ingroup tasks
 
@@ -73,12 +76,14 @@ namespace RTSim {
         MetaSim::Tick phase;           // Initial phasing for first arrival
         MetaSim::Tick arrival;         // Arrival time of the current (last) instance
         MetaSim::Tick execdTime;       // Actual Real-Time execution of the task
-        MetaSim::Tick _maxC;
+        MetaSim::Tick _maxC;           // Maximum computation time 
 	std::deque <MetaSim::Tick> arrQueue; // Arrival queue, sorted FIFO
         int arrQueueSize;      // -1 stands for no-limit
 
-        bool active;           // true if the current request has not completed
-        bool executing;        // true if the task is currently executing
+	task_state state;      // IDLE, READY, EXECUTING, BLOCKED 
+
+        //bool active;           // true if the current request has not completed
+        //bool executing;        // true if the task is currently executing
 
         typedef std::vector<Instr *> InstrList;
         typedef std::vector<Instr *>::iterator InstrIterator;
@@ -95,8 +100,8 @@ namespace RTSim {
         AbstractFeedbackModule *feedback;
 
     public:
-        // events need to be public to avoid an excessive fat interface
-        // this is especially true when considering the probing mechanism
+        // Events need to be public to avoid an excessive fat interface.
+        // Rhis is especially true when considering the probing mechanism
         // (for statistical collection and tracing). 
 
         ArrEvt arrEvt;
@@ -112,7 +117,7 @@ namespace RTSim {
          Returns a constant reference to the instruction queue
          (instrQueue)
          */
-        const InstrList& getInstrQueue() {return instrQueue;};
+        const InstrList& getInstrQueue() { return instrQueue; };
         
         /**
          Returns a constant reference to the actual instruction
@@ -121,8 +126,8 @@ namespace RTSim {
         const InstrIterator& getActInstr() {return actInstr;};
         
         /**
-         Reset the instruction queue pointer:
-            actInstr = instrQueue.begin()
+	   Reset the instruction queue pointer:
+	   actInstr = instrQueue.begin()
          */
         void resetInstrQueue();
 
@@ -212,6 +217,10 @@ namespace RTSim {
         /** handles buffered arrivals: returns true if there is a buffered
             arrival */
         bool chkBuffArrival() const;
+
+	// blocking a task: 
+	// I deschedule the task, then it goes into the blocking state. 
+	// It can be unblocked only when an Unblock() is called
 
         /******************************************************************/
         
@@ -318,6 +327,11 @@ namespace RTSim {
             current time.
         */
         virtual void onInstrEnd();
+
+
+	void block();
+	void unblock();
+
 
         /** 
             Specify that this task has to be traced 

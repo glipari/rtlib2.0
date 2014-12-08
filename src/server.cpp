@@ -286,8 +286,7 @@ namespace RTSim {
         if (newExe != currExe_) {
             if (currExe_ != NULL) currExe_->deschedule();
             currExe_ = newExe;
-            if (newExe != NULL) newExe->schedule();
-            //sched_->notify(newExe);
+            if (currExe_ != NULL) currExe_->schedule();
         }
 
         DBGPRINT_2("Now Running: ", taskname(newExe));

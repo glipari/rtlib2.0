@@ -5,7 +5,7 @@ include_directories(${metasim_INCLUDE_DIRS})
 # Environment-based settings.
 if(APPLE)
 	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")	
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")	
 	if(EXISTS "${metasim_DIR}/libmetasim.dylib")
 		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/libmetasim.dylib")
 	elseif(EXISTS "${metasim_DIR}/Debug/libmetasim.dylib")
@@ -16,7 +16,7 @@ if(APPLE)
 	
 elseif(UNIX)
 	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
 	set(metasim_LIBRARY "${metasim_DIR}/libmetasim.so")
 	
 elseif(WIN32)
@@ -26,7 +26,6 @@ elseif(WIN32)
 	elseif(EXISTS "${metasim_DIR}/Release/metasim.lib")
 		set(metasim_LIBRARY "${metasim_DIR}/Release/metasim.lib")
 	endif()
-	
 endif()
 
 # Create a library called "rtlib" which includes the source files.
@@ -38,7 +37,7 @@ add_library(rtlib ${LIB_TYPE} capacitytimer.cpp cbserver.cpp cpu.cpp
   rmsched.cpp rrsched.cpp rttask.cpp schedinstr.cpp schedpoints.cpp schedrta.cpp 
   scheduler.cpp server.cpp sparepot.cpp sporadicserver.cpp supercbs.cpp 
   task.cpp taskevt.cpp texttrace.cpp threinstr.cpp timer.cpp traceevent.cpp 
-  tracepower.cpp waitinstr.cpp instr.cpp)
+  tracepower.cpp waitinstr.cpp instr.cpp suspend_instr.cpp)
 
 # Indicate that rtlib need metasim library.
 target_link_libraries( rtlib  ${metasim_LIBRARY} )
