@@ -62,5 +62,31 @@ namespace RTSim {
 			new Particle<DeschedEvt, TextTrace>(&t->deschedEvt, this);
 			new Particle<DeadEvt, TextTrace>(&t->deadEvt, this);
 		}
+    
+        VirtualTrace::VirtualTrace(map<string, int> *r)
+        {
+            results = r;
+        }
+        
+        VirtualTrace::~VirtualTrace()
+        {
+            
+        }
+    
+        void VirtualTrace::probe(EndEvt& e)
+        {
+            Task* tt = e.getTask();
+            auto tmp_wcrt = SIMUL.getTime() - tt->getArrival();
+            
+            if ((*results)[tt->getName()] < tmp_wcrt)
+            {
+                (*results)[tt->getName()] = tmp_wcrt;
+            }
+        }
 
+        void VirtualTrace::attachToTask(Task* t)
+        {
+            new Particle<EndEvt, VirtualTrace>(&t->endEvt, this);
+        }
+    
 };
