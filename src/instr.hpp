@@ -154,6 +154,7 @@ namespace RTSim {
         EndInstrEvt(Instr * in) : 
             MetaSim::Event(Event::_DEFAULT_PRIORITY-3), _instr(in) {} 
         virtual void doit();
+        virtual Instr* getInstruction() const;        
     };
 } // namespace RTSim 
 

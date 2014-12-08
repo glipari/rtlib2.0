@@ -8,9 +8,9 @@ namespace RTSim
         _instr->onEnd();
     }
 
-    // Instr* EndInstrEvt::getInstruction() const
-    // {
-    //     return (_instr);
-    // }
+     Instr* EndInstrEvt::getInstruction() const
+     {
+         return (_instr);
+     }
 
 }
