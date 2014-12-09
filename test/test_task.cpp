@@ -214,3 +214,83 @@ TEST_CASE("Task suspension, two tasks")
 
     SIMUL.endSingleRun();
 }
+
+TEST_CASE("Task kill, one task")
+{
+    PeriodicTask t1(10, 9, 0);
+    t1.insertCode("fixed(20);");
+    t1.setAbort(false);
+    t1.killOnMiss(true);
+    
+    FPScheduler sched;
+    RTKernel kern(&sched);
+    
+    kern.addTask(t1, "1");
+    
+    SIMUL.initSingleRun();
+    
+    SIMUL.run_to(0);
+    
+    REQUIRE(t1.getExecTime() == 0);
+    
+    SIMUL.run_to(9);
+    
+    REQUIRE(t1.getExecTime() == 9);
+    
+    SIMUL.run_to(10);
+    
+    REQUIRE(t1.getExecTime() == 0);
+    
+    SIMUL.endSingleRun();
+    
+}
+
+TEST_CASE("Task kill, two tasks")
+{
+    PeriodicTask t1(10, 10, 0);
+    t1.insertCode("fixed(2);");
+    t1.setAbort(false);
+    
+    PeriodicTask t2(10, 8, 0);
+    t2.insertCode("fixed(20);");
+    t2.setAbort(false);
+    t2.killOnMiss(true);
+    
+    FPScheduler sched;
+    RTKernel kern(&sched);
+    
+    kern.addTask(t1, "1");
+    kern.addTask(t2, "2");
+    
+    SIMUL.initSingleRun();
+    
+    SIMUL.run_to(0);
+    
+    REQUIRE(t1.getExecTime() == 0);
+    REQUIRE(t2.getExecTime() == 0);
+    
+    SIMUL.run_to(2);
+    
+    REQUIRE(t1.getExecTime() == 2);
+    REQUIRE(t2.getExecTime() == 0);
+    
+    SIMUL.run_to(7);
+    REQUIRE(t2.getExecTime() == 5);
+    
+    SIMUL.run_to(8);
+    
+    REQUIRE(t2.getExecTime() == 6);
+    
+    SIMUL.run_to(9);
+    
+    REQUIRE(t1.getExecTime() == 2);
+    REQUIRE(t2.getExecTime() == 6);
+    
+    SIMUL.run_to(11);
+    
+    REQUIRE(t1.getExecTime() == 1);
+    REQUIRE(t2.getExecTime() == 0);
+    
+    SIMUL.endSingleRun();
+    
+}

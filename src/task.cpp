@@ -340,6 +340,31 @@ namespace RTSim {
         }
     }
     
+    void Task::killInstance() throw(TaskNotActive, TaskNotExecuting)
+    {
+        
+        DBGENTER(_TASK_DBG_LEV);
+        
+        if (not isActive()) {
+            DBGPRINT("not active...");
+            throw TaskNotActive("killInstance() on a non-active task");
+        }
+        
+        endEvt.drop();
+        
+        (*actInstr)->deschedule();
+        execdTime += (*actInstr)->getExecTime();
+        
+        if (chkBuffArrival()) {
+            fakeArrEvt.post(SIMUL.getTime());
+            DBGPRINT("[Fake Arrival generated]");
+        }
+        
+        state = TSK_IDLE;
+        
+        killEvt.process();
+    }
+    
     void Task::onKill(Event *e)
     {
         DBGENTER(_TASK_DBG_LEV);
@@ -348,7 +373,6 @@ namespace RTSim {
         killEvt.drop();
         // normal code
         
-        actInstr = instrQueue.begin();
         lastArrival = arrival;
         
         int cpu_index = getCPU()->getIndex();
@@ -358,7 +382,7 @@ namespace RTSim {
         
         endEvt.setCPU(cpu_index);
         _kernel->onEnd(this);
- 	state = TSK_IDLE;
+        state = TSK_IDLE;
         
         if (feedback) {
             DBGPRINT("Calling the feedback module");
@@ -375,7 +399,6 @@ namespace RTSim {
             
             DBGPRINT("[Fake Arrival generated]");
         }
-        throw "Unchedulable";
     }
     
     void Task::onSched(Event *e)
@@ -476,33 +499,6 @@ namespace RTSim {
     {
         arrEvt.drop();
         arrEvt.post(t);
-    }
-    
-    void Task::killInstance() throw(TaskNotActive, TaskNotExecuting)
-    {
-        
-        DBGENTER(_TASK_DBG_LEV);
-        
-        if (not isActive()) {
-            DBGPRINT("not active...");
-            throw TaskNotActive("killInstance() on a non-active task");
-        }
-        
-        endEvt.drop();
-        
-        (*actInstr)->reset();
-        execdTime += (*actInstr)->getExecTime();
-        
-        actInstr = instrQueue.begin();
-        lastArrival = arrival;
-        if (chkBuffArrival()) {
-            fakeArrEvt.post(SIMUL.getTime());
-            DBGPRINT("[Fake Arrival generated]");
-        }
-        
-	state = TSK_IDLE;
-        
-        killEvt.process();
     }
     
     Tick Task::getWCET() const
