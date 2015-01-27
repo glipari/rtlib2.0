@@ -14,7 +14,7 @@
 #include <string>
 
 #include <factory.hpp>
-
+#include <AVRTask.hpp>
 #include <task.hpp>
 #include <rttask.hpp>
 #include <reginstr.hpp>
@@ -25,6 +25,7 @@ namespace RTSim {
 
   const string TaskName("Task");
   const string PeriodicTaskName("PeriodicTask");
+  const string AVRTaskName("AVRTask");
   
   /**
      This namespace should not be visible, and in any case, users
@@ -39,6 +40,9 @@ namespace RTSim {
 
     static registerInFactory<Task, PeriodicTask, string>
     registerPeriodic(PeriodicTaskName);
+
+    static registerInFactory<Task, AVRTask, string>
+    registerAVR(AVRTaskName);
   } // namespace __var_stub
 
   void __regtask_init() {}

@@ -203,7 +203,7 @@ namespace RTSim {
             @todo simplify the arrival handling, by reducing the number of
             methods to be invoked.
 	*/
-        void handleArrival(Tick arrival);
+        virtual void handleArrival(Tick arrival);
 
         /** handles buffered arrivals:  inserts an arrival in the buffer */
         void buffArrival();

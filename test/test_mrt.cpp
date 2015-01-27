@@ -166,4 +166,6 @@ TEST_CASE("multicore with cbs")
     REQUIRE(serv2.getDeadline() == 30);
     REQUIRE(serv3.get_remaining_budget() == 2);
     REQUIRE(serv3.getDeadline() == 36);
+
+   SIMUL.endSingleRun();
 }
