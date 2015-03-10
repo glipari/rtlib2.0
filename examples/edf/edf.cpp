@@ -6,6 +6,7 @@
 #include <edfsched.hpp>
 #include <jtrace.hpp>
 #include <texttrace.hpp>
+#include <json_trace.hpp>
 #include <rttask.hpp>
 #include <instr.hpp>
 
@@ -23,6 +24,7 @@ int main()
         //JavaTrace jtrace("trace.trc");
 
         TextTrace ttrace("trace.txt");
+        JSONTrace jtrace("trace.json");
   
         cout << "Creating Scheduler and kernel" << endl;
         EDFScheduler edfsched;
@@ -52,18 +54,14 @@ int main()
 
         cout << "Setting up traces" << endl;
 	
-        // declares that both task need to be traced. (old
-        // way)
-//        t1.setTrace(&jtrace);
-//        t2.setTrace(&jtrace);
-//        t3.setTrace(&jtrace);
-//        t4.setTrace(&jtrace);
-
         // new way
         ttrace.attachToTask(&t1);
         ttrace.attachToTask(&t2);
         ttrace.attachToTask(&t3);
-//        ttrace.attachToTask(&t4);
+
+        jtrace.attachToTask(&t1);
+        jtrace.attachToTask(&t2);
+        jtrace.attachToTask(&t3);
 
         cout << "Adding tasks to schedulers" << endl;
 
