@@ -12,7 +12,7 @@
  *                                                                         *
  ***************************************************************************/
 #ifndef __JSONTRACE_HPP__
-#define __JSONRACE_HPP__
+#define __JSONTRACE_HPP__
 
 #include <fstream>
 #include <iostream>
