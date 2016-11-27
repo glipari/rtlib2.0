@@ -32,7 +32,7 @@ namespace RTSim {
     {
     }
 
-    bool TaskModel::TaskModelCmp::operator()(TaskModel* a, TaskModel* b)
+    bool TaskModel::TaskModelCmp::operator()(TaskModel* a, TaskModel* b) const
     {
         if (a->getPriority() < b->getPriority()) return true;
         else if (a->getPriority() == b->getPriority()) {

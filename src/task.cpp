@@ -177,7 +177,7 @@ namespace RTSim {
     void Task::block() 
     {
 	// check that the task is not idle and is not already blocked
-	if (state == TSK_IDLE or state == TSK_BLOCKED) 
+	if (state == TSK_IDLE || state == TSK_BLOCKED) 
 	    throw string("Task cannot be blocked, because it is ") + 
 		(state == TSK_IDLE ? "idle" : "blocked");
 	_kernel->suspend(this);
@@ -304,10 +304,10 @@ namespace RTSim {
         deadEvt.drop();
         // normal code
         
-        if (not isActive()) {
+        if (!isActive()) {
             throw TaskNotActive("OnEnd() on a non-active task");
         }
-        if (not isExecuting()) {
+        if (!isExecuting()) {
             throw TaskNotExecuting("OnEnd() on a non-executing task");
         }
         
@@ -345,7 +345,7 @@ namespace RTSim {
         
         DBGENTER(_TASK_DBG_LEV);
         
-        if (not isActive()) {
+        if (!isActive()) {
             DBGPRINT("not active...");
             throw TaskNotActive("killInstance() on a non-active task");
         }
@@ -410,7 +410,7 @@ namespace RTSim {
         DBGPRINT("schedEvt for task " << getName()
                  << " on CPU " << cpu_index);
         
-        if (not isActive()) {
+        if (!isActive()) {
             throw TaskNotActive("OnSched on a non-active task");
         }
         if (isExecuting()) {
@@ -437,10 +437,10 @@ namespace RTSim {
         DBGPRINT("DeschedEvt for task " << getName()
                  << "from CPU" << cpu_index);
         
-        if (not isActive()) {
+        if (!isActive()) {
             throw TaskNotActive("OnDesched on a non-active task");
         }
-        if (not isExecuting()) {
+        if (!isExecuting()) {
             throw TaskNotExecuting("OnDesched() on a non-executing task");
         }
         
@@ -457,7 +457,7 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         DBGPRINT("task : " << getName());
-        if (not isActive()) {
+        if (!isActive()) {
             DBGPRINT("not active...");
             throw TaskNotActive("onInstrEnd() on a non-active task");
         }

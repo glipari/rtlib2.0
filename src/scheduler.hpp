@@ -147,7 +147,7 @@ namespace RTSim {
                @todo check if this works with multi-processors (I
                guess not).
             */
-            bool operator()(TaskModel* a, TaskModel* b);
+            bool operator()(TaskModel* a, TaskModel* b) const;
         };
     };
 
