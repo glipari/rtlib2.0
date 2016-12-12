@@ -66,21 +66,21 @@ namespace RTSim {
     */
     class Task : public Entity, virtual public AbsRTTask {
     private:
-	// Hide copy constructor and assignment, tasks cannot be copied
-	Task(const Task &);
-	Task & operator=(const Task &);
+        // Hide copy constructor and assignment, tasks cannot be copied
+        Task(const Task &);
+        Task & operator=(const Task &);
 
     protected:
-	MetaSim::RandomVar *int_time;  // The task is owner of this varible
+        MetaSim::RandomVar *int_time;  // The task is owner of this varible
         MetaSim::Tick lastArrival;     // The arrival of the last instance!
         MetaSim::Tick phase;           // Initial phasing for first arrival
         MetaSim::Tick arrival;         // Arrival time of the current (last) instance
         MetaSim::Tick execdTime;       // Actual Real-Time execution of the task
         MetaSim::Tick _maxC;           // Maximum computation time 
-	std::deque <MetaSim::Tick> arrQueue; // Arrival queue, sorted FIFO
+        std::deque <MetaSim::Tick> arrQueue; // Arrival queue, sorted FIFO
         int arrQueueSize;      // -1 stands for no-limit
 
-	task_state state;      // IDLE, READY, EXECUTING, BLOCKED 
+        task_state state;      // IDLE, READY, EXECUTING, BLOCKED 
 
         //bool active;           // true if the current request has not completed
         //bool executing;        // true if the task is currently executing
@@ -114,21 +114,21 @@ namespace RTSim {
         DeadEvt deadEvt;
         
         /**
-         Returns a constant reference to the instruction queue
-         (instrQueue)
-         */
+           Returns a constant reference to the instruction queue
+           (instrQueue)
+        */
         const InstrList& getInstrQueue() { return instrQueue; };
         
         /**
-         Returns a constant reference to the actual instruction
-         (actInstr)
-         */
+           Returns a constant reference to the actual instruction
+           (actInstr)
+        */
         const InstrIterator& getActInstr() {return actInstr;};
         
         /**
-	   Reset the instruction queue pointer:
-	   actInstr = instrQueue.begin()
-         */
+           Reset the instruction queue pointer:
+           actInstr = instrQueue.begin()
+        */
         void resetInstrQueue();
 
     protected:
@@ -144,7 +144,7 @@ namespace RTSim {
         /**
            This event handler is invoked every time an arrival event 
            is triggered. 
-	*/
+        */
         void onArrival(MetaSim::Event *);
 
         /**
@@ -156,9 +156,9 @@ namespace RTSim {
         void onEndInstance(MetaSim::Event *);
         
         /**
-	   This event handler is invoked when a task instance has been killed.
-	   Similar to onEndInstance, but the endEvt is not processed. 
-         */
+           This event handler is invoked when a task instance has been killed.
+           Similar to onEndInstance, but the endEvt is not processed. 
+        */
         void onKill(MetaSim::Event *);
 
         /**
@@ -202,7 +202,7 @@ namespace RTSim {
 
             @todo simplify the arrival handling, by reducing the number of
             methods to be invoked.
-	*/
+        */
         virtual void handleArrival(Tick arrival);
 
         /** handles buffered arrivals:  inserts an arrival in the buffer */
@@ -218,9 +218,9 @@ namespace RTSim {
             arrival */
         bool chkBuffArrival() const;
 
-	// blocking a task: 
-	// I deschedule the task, then it goes into the blocking state. 
-	// It can be unblocked only when an Unblock() is called
+        // blocking a task: 
+        // I deschedule the task, then it goes into the blocking state. 
+        // It can be unblocked only when an Unblock() is called
 
         /******************************************************************/
         
@@ -261,7 +261,7 @@ namespace RTSim {
 
         /**
            For the abstract factory
-         */
+        */
         static Task* createInstance(vector<string> &par);
 
         /**
@@ -311,12 +311,12 @@ namespace RTSim {
 
         
         /**
-            This method permits to select the behaviour of the task when a 
-            deadline miss occurs.
+           This method permits to select the behaviour of the task when a 
+           deadline miss occurs.
          
-            @param kill = true, to kill the task when a deadline miss occurs
-            @param kill = false, to contine the task when a deadline miss occurs
-         */
+           @param kill = true, to kill the task when a deadline miss occurs
+           @param kill = false, to contine the task when a deadline miss occurs
+        */
         void killOnMiss(bool kill);
         
         /** 
@@ -329,14 +329,27 @@ namespace RTSim {
         virtual void onInstrEnd();
 
 
-	void block();
-	void unblock();
-
+        void block();
+        void unblock();
 
         /** 
             Specify that this task has to be traced 
         */
-        virtual void setTrace(Trace *t);
+        //virtual void setTrace(Trace *t);
+
+        template <class TraceClass>
+        void setTrace(TraceClass to) {
+            // this cannot work. We should find a workaround
+            // for (auto x : instrQueue) 
+            //     x->setTrace(to);
+            
+            attach_stat(to, arrEvt);
+            attach_stat(to, fakeArrEvt);
+            attach_stat(to, endEvt);
+            attach_stat(to, schedEvt);
+            attach_stat(to, deschedEvt);
+        }
+        
 
         /** 
             Adds a new instruction at the end of the instruction list. This
@@ -374,7 +387,7 @@ namespace RTSim {
         /** Returns the executed time of the last (or current) instance */
         Tick getExecTime() const;
 
-	Tick getMinIAT() const { return Tick(int_time->getMinimum());}
+        Tick getMinIAT() const { return Tick(int_time->getMinimum());}
 
         virtual Tick getLastSched() {return _lastSched;}
 
@@ -502,7 +515,7 @@ namespace RTSim {
         /**
            Sets the feedback module for this task (optional, by
            default no feedback is needed).
-         */
+        */
 
         void setFeedbackModule(AbstractFeedbackModule *afm);
 

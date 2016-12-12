@@ -28,14 +28,14 @@ namespace RTSim {
 
     RTKernel::RTKernel(Scheduler *s, const std::string& name, CPU* c) 
         : Entity(name),
-	  _sched(s),
-	  _resMng(0),
-	  _cpu(),
-	  internalCpu(true),
-	  beginDispatchEvt(this),
-	  endDispatchEvt(this),
-	  _isContextSwitching(false),
-	  _contextSwitchDelay(0)
+          _sched(s),
+          _resMng(0),
+          _cpu(),
+          _isContextSwitching(false),
+          _contextSwitchDelay(0),
+          internalCpu(true),
+          beginDispatchEvt(this),
+          endDispatchEvt(this)
     {   
         __reginstr_init();
         __regsched_init();

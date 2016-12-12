@@ -94,9 +94,9 @@ namespace RTSim {
         /// List of the tasks.
         deque<AbsRTTask *> _handled;
 
-	bool _isContextSwitching;
+        bool _isContextSwitching;
     
-	Tick  _contextSwitchDelay;
+        Tick  _contextSwitchDelay;
 
         /** 
             This boolean variable is true if _cpu was created
@@ -106,14 +106,14 @@ namespace RTSim {
         */
         bool internalCpu;
 
-	friend class DispatchEvt;
-	friend class BeginDispatchEvt;
-	friend class EndDispatchEvt;
+        friend class DispatchEvt;
+        friend class BeginDispatchEvt;
+        friend class EndDispatchEvt;
 
     public:
 
-	BeginDispatchEvt beginDispatchEvt;
-	EndDispatchEvt endDispatchEvt;
+        BeginDispatchEvt beginDispatchEvt;
+        EndDispatchEvt endDispatchEvt;
     
         /**
            Constructor. It needs a pointer to the
@@ -163,8 +163,8 @@ namespace RTSim {
         */
         virtual void dispatch();
 
-	virtual void onBeginDispatch(Event* e);
-	virtual void onEndDispatch(Event* e);
+        virtual void onBeginDispatch(Event* e);
+        virtual void onEndDispatch(Event* e);
 
         /**
            This function is invoked from the task onArrival
@@ -224,7 +224,7 @@ namespace RTSim {
 
         /**
            Forwards the request of preemption threshold raising for 
-	   the executing task to the scheduler.
+           the executing task to the scheduler.
         */
 
         virtual void setThreshold(const int th);
@@ -334,7 +334,7 @@ namespace RTSim {
 
         /**
            Function inherited from AbsKernel. It says if the 
-	   kernel is currently in context switch mode.
+           kernel is currently in context switch mode.
         */
         virtual bool isContextSwitching() const 
             { return _isContextSwitching; }
@@ -343,17 +343,17 @@ namespace RTSim {
            Function to set the overhead of the context switching,
            that is, by default, zero.
         */
-	virtual void setContextSwitchDelay( const Tick& t ) { 
+        virtual void setContextSwitchDelay( const Tick& t ) { 
             _contextSwitchDelay = t; 
         }
 
         /**
-         It returns the name of the task (std::string) stored in a
-         std::vector<std::string>.
-         This solution is proposed to be compliant with the multi
-         core kernel, for which there could be more than one task 
-         running at the same time.
-         */
+           It returns the name of the task (std::string) stored in a
+           std::vector<std::string>.
+           This solution is proposed to be compliant with the multi
+           core kernel, for which there could be more than one task 
+           running at the same time.
+        */
         virtual std::vector<std::string> getRunningTasks();
     };
   

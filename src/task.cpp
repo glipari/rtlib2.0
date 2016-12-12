@@ -122,23 +122,22 @@ namespace RTSim {
         
     }
     
-    void Task::setTrace(Trace *t)
-    {
-        // For the moment, let's remove this...
-        // Propagate tracing over Pseudo Instructions
+    // void Task::setTrace(Trace *t)
+    // {
+    //     // For the moment, let's remove this...
+    //     // Propagate tracing over Pseudo Instructions        
+    //     InstrIterator i = instrQueue.begin();
+    //     while (i != instrQueue.end()) {
+    //         (*i)->setTrace(t);
+    //         i++;
+    //     }
         
-        InstrIterator i = instrQueue.begin();
-        while (i != instrQueue.end()) {
-            (*i)->setTrace(t);
-            i++;
-        }
-        
-        arrEvt.addTrace(t);
-        fakeArrEvt.addTrace(t);
-        endEvt.addTrace(t);
-        schedEvt.addTrace(t);
-        deschedEvt.addTrace(t);
-    }
+    //     arrEvt.addTrace(t);
+    //     fakeArrEvt.addTrace(t);
+    //     endEvt.addTrace(t);
+    //     schedEvt.addTrace(t);
+    //     deschedEvt.addTrace(t);
+    // }
     
     void Task::reactivate()
     {
@@ -534,15 +533,15 @@ namespace RTSim {
                 DBGPRINT_2(" - ", *j);
             DBGPRINT("");
             
-            auto_ptr<Instr> curr = genericFactory<Instr>::instance().create(token, par_list);
+            unique_ptr<Instr> curr = genericFactory<Instr>::instance().create(token, par_list);
             
-            Instr *curr_instr = curr.release();
+            //Instr *curr_instr = curr.release();
             
-            if (!curr_instr) throw ParseExc("insertCode", token);
+            if (!curr) throw ParseExc("insertCode", token);
             
-            DBGPRINT("Instr " << curr_instr->getName() << "  created.");
+            DBGPRINT("Instr " << curr->getName() << "  created.");
             
-            addInstr(curr_instr);
+            addInstr(curr.release());
             
             printInstrList();
         }

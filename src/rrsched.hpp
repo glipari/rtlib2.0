@@ -54,7 +54,7 @@ namespace RTSim {
             Tick _rrSlice;      
 
         public:
-
+            
             RRModel(AbsRTTask* t) : TaskModel(t), _rrSlice(1) {}
             virtual ~RRModel() {}
 
@@ -77,13 +77,14 @@ namespace RTSim {
             */
             bool isRoundExpired();
         };
-
-        GEvent<RRScheduler> _rrEvt;
     
         int defaultSlice;
 
     public:
 
+        // events must be public, (part of the interface)
+        GEvent<RRScheduler> _rrEvt;
+        
         /** Constructor */
         RRScheduler(int defSlice);
 

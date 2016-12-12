@@ -100,11 +100,11 @@ namespace RTSim {
         _endEvt.drop();
     }
 
-    void SignalInstr::setTrace(Trace *t) 
-    {
-        _endEvt.addTrace(t);
-        _signalEvt.addTrace(t);
-    }
+    // void SignalInstr::setTrace(Trace *t) 
+    // {
+    //     _endEvt.addTrace(t);
+    //     _signalEvt.addTrace(t);
+    // }
 
     void SignalInstr::onEnd() 
     {

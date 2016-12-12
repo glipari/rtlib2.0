@@ -34,10 +34,10 @@ namespace RTSim {
     {
         DBGENTER(_RR_SCHED_DBG_LEV);
         DBGPRINT_2("DEFAULT SLICE = ", defaultSlice);
-        //register_handler(_rrEvt, this, &RRScheduler::round);
     }
 
 
+    
     void RRScheduler::setRRSlice(AbsRTTask* task, Tick slice)
     {
         RRModel* model = dynamic_cast<RRModel *>(find(task));
