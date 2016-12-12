@@ -28,14 +28,14 @@ namespace RTSim {
         tasks(),
         last_exec_time(0),
         kernel(0),
-        sched_(0),
-        currExe_(0),
         _bandExEvt(this, &Server::onBudgetExhausted, Event::_DEFAULT_PRIORITY + 4),
         _dlineMissEvt(this, &Server::onDlineMiss, Event::_DEFAULT_PRIORITY + 6),
         _rechargingEvt(this, &Server::onRecharging, Event::_DEFAULT_PRIORITY - 1),
-	_schedEvt(this, &Server::onSched),
-	_deschedEvt(this, &Server::onDesched),
-	_dispatchEvt(this, &Server::onDispatch, Event::_DEFAULT_PRIORITY + 5)
+        _schedEvt(this, &Server::onSched),
+        _deschedEvt(this, &Server::onDesched),
+        _dispatchEvt(this, &Server::onDispatch, Event::_DEFAULT_PRIORITY + 5),
+        sched_(0),
+        currExe_(0)
     {
         DBGENTER(_SERVER_DBG_LEV);
         string s_name = parse_util::get_token(s);
@@ -45,10 +45,10 @@ namespace RTSim {
 
         DBGPRINT_2("SCHEDULER: ", s_name);
         DBGPRINT("PARAMETERS: ");
-        for (int i=0; i<p.size(); ++i) DBGPRINT(p[i]);
+        for (unsigned int i=0; i<p.size(); ++i) DBGPRINT(p[i]);
 
-        auto_ptr<Scheduler> curr = FACT(Scheduler).create(s_name, p);
-        sched_ = curr.release();
+        unique_ptr<Scheduler> curr = FACT(Scheduler).create(s_name, p);
+        //sched_ = curr.release();
         if (!sched_) throw ParseExc("Server::Server()", s);
 
         sched_->setKernel(this);

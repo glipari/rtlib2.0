@@ -19,19 +19,18 @@
 
 namespace RTSim {
 
-    WaitInstr::WaitInstr(Task * f, const char *r, int nr, char *n)
+    using namespace std;
+
+    WaitInstr::WaitInstr(Task * f, const string &r, int nr, const string &n)
         : Instr(f, n), _res(r), _endEvt(this), 
           _waitEvt(f, this), _numberOfRes(nr) 
     {}
 
-    WaitInstr::WaitInstr(Task * f, const string &r, int nr, char *n)
-        : Instr(f, n), _res(r), _endEvt(this), 
-          _waitEvt(f, this), _numberOfRes(nr) 
-    {}
-
-    Instr* WaitInstr::createInstance(vector<string> &par)
+    unique_ptr<WaitInstr> WaitInstr::createInstance(vector<string> &par)
     {
-        return new WaitInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]);
+        unique_ptr<WaitInstr> ptr(new WaitInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]));
+        
+        return ptr;
     }
 
     void WaitInstr::endRun() 
@@ -53,11 +52,11 @@ namespace RTSim {
         _endEvt.drop();
     }
 
-    void WaitInstr::setTrace(Trace *t) 
-    {
-        _endEvt.addTrace(t); 
-        _waitEvt.addTrace(t);
-    }
+    // void WaitInstr::setTrace(Trace *t) 
+    // {
+    //     _endEvt.addTrace(t); 
+    //     _waitEvt.addTrace(t);
+    // }
 
     void WaitInstr::onEnd() 
     {
@@ -74,19 +73,15 @@ namespace RTSim {
         _waitEvt.process();
     }
 
-    SignalInstr::SignalInstr(Task *f,  const char *r, int nr, char *n)
+    SignalInstr::SignalInstr(Task *f, const string &r, int nr, const string &n)
         : Instr(f, n), _res(r), _endEvt(this), 
           _signalEvt(f, this), _numberOfRes(nr) 
     {}
 
-    SignalInstr::SignalInstr(Task *f, const string &r, int nr, char *n)
-        : Instr(f, n), _res(r), _endEvt(this), 
-          _signalEvt(f, this), _numberOfRes(nr) 
-    {}
-
-    Instr* SignalInstr::createInstance(vector<string> &par)
+    unique_ptr<SignalInstr> SignalInstr::createInstance(vector<string> &par)
     {
-        return new SignalInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]);
+        unique_ptr<SignalInstr> ptr(new SignalInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]));
+        return ptr;
     }
 
     void SignalInstr::endRun() 

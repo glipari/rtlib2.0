@@ -55,14 +55,14 @@ namespace RTSim {
         
         DBGVAR(response_time[0]);
 
-        for (int i=1; i<server_vector.size(); i++) {
+        for (unsigned int i=1; i<server_vector.size(); i++) {
             DBGVAR(i);
             double rtime = server_vector[i].wcet;
             double old_rtime = 0;
             while (old_rtime != rtime) {
                 old_rtime = rtime;
                 rtime = server_vector[i].wcet;
-                for (int j=0; j<i; j++) 
+                for (unsigned int j=0; j<i; j++) 
                     rtime += ceil(old_rtime / (double)server_vector[j].period) * (double)server_vector[j].wcet;
 
                 if (rtime > (double)server_vector[i].period) {
@@ -79,10 +79,10 @@ namespace RTSim {
 
         // now compute the eta_i,j (with j < i)
         vector< vector<double> > eta;
-        for (int i=0; i<server_vector.size(); i++) {
+        for (unsigned int i=0; i<server_vector.size(); i++) {
             vector<double> myeta_i;
             DBGPRINT("For task i= " << i);
-            for (int j=0; j<i; j++) {
+            for (unsigned int j=0; j<i; j++) {
                 double e = ceil(response_time[i]/(double)server_vector[j].period);
                 myeta_i.push_back(e);
                 DBGVAR(e);
@@ -95,14 +95,14 @@ namespace RTSim {
         DBGPRINT("Now computing the m_i,i");
 
         // now compute the m_i,j and add the server to the algorithm
-        for (int i=1; i<server_vector.size(); i++) {
+        for (unsigned int i=1; i<server_vector.size(); i++) {
             DBGVAR(i);
             row_t m;
-            for (int j=0; j<i; j++) {
+            for (unsigned int j=0; j<i; j++) {
                 DBGPRINT("eta["<< i << "][" << j << "]: " << eta[i][j]); 
                 double rate = eta[i][j];
                 DBGVAR(rate);
-                for (int h=i+1; h<server_vector.size(); h++) { 
+                for (unsigned int h=i+1; h<server_vector.size(); h++) { 
                     rate = min(rate, eta[h][j]/eta[h][i]);
                     DBGVAR(eta[h][j]/eta[h][i]);
                     DBGVAR(rate);

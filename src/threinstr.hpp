@@ -85,7 +85,7 @@ namespace RTSim {
         //virtual void setTrace(Trace *);
 
         template <class TraceClass>
-        void setTrace(TraceClass trace_obj) {
+        void setTrace(TraceClass &trace_obj) {
             attach_stat(trace_obj, _endEvt);
             attach_stat(trace_obj, _threEvt);
         }

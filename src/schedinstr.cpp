@@ -24,9 +24,11 @@ namespace RTSim {
         : Instr(f, n), _endEvt(this), _threEvt(f, this) 
     {}
 
-    Instr* SchedInstr::createInstance(const vector<string> &par)
+    unique_ptr<SchedInstr> SchedInstr::createInstance(const vector<string> &par)
     {
-        return new SchedInstr(dynamic_cast<Task *>(Entity::_find(par[1])),par[0]);
+        unique_ptr<SchedInstr> ptr(new SchedInstr(dynamic_cast<Task *>(Entity::_find(par[1])),par[0]));
+        
+        return ptr;
     }
 
     void SchedInstr::endRun() 
@@ -75,9 +77,5 @@ namespace RTSim {
         DBGPRINT("After lowing threshold for task " << _father->getName());
 
         _threEvt.process();
-
-    
-
     }
-
 }

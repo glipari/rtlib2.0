@@ -70,7 +70,7 @@ namespace RTSim {
          */
         SchedInstr(Task * f, const std::string& s, const std::string &n = "");
 
-        static Instr* createInstance(std::vector<std::string> &par);
+        static std::unique_ptr<SchedInstr> createInstance(const std::vector<std::string> &par);
 
         ///Virtual methods from Instr
         virtual void schedule();
@@ -82,7 +82,7 @@ namespace RTSim {
         //virtual void setTrace(Trace *);
 
         template <class TraceClass>
-        void setTrace(TraceClass trace_obj) {
+        void setTrace(TraceClass &trace_obj) {
             attach_stat(trace_obj, _endEvt);
             attach_stat(trace_obj, _threEvt);
         }
