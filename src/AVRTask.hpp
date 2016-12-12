@@ -23,18 +23,17 @@ email                : simoncelli.stefano@hotmail.it
 
 namespace RTSim {
 
-	using namespace std;
 	using namespace MetaSim;
 	using namespace parse_util;
 
 	class WrongParameterSize : public BaseExc {
 	public:
-		WrongParameterSize(string msg) :BaseExc(msg, "AVRTask", "AVRTask.cpp") {}
+		WrongParameterSize(const std::string &msg) :BaseExc(msg, "AVRTask", "AVRTask.cpp") {}
 	};
 
 	class ModeOutOfIndex : public BaseExc {
 	public:
-		ModeOutOfIndex(string msg) :BaseExc(msg, "AVRTask", "AVRTask.cpp") {}
+		ModeOutOfIndex(const std::string &msg) :BaseExc(msg, "AVRTask", "AVRTask.cpp") {}
 	};
 
 	class AVRTask : public Task{
@@ -51,27 +50,28 @@ namespace RTSim {
 		//Buffered values passed by activate(mode,dl)
 		//For each job the relative deadline must be computed based on the current engine velocity (the same for the mode index)
 		//they are buffered in order to be used also in overload conditions
-		vector<Tick> BufferedDeadlines;
-		vector<int> BufferedModes;
+		std::vector<Tick> BufferedDeadlines;
+		std::vector<int> BufferedModes;
 
-		//one vector<Instr*> for each mode
+		//one std::vector<Instr*> for each mode
 		//built by constructor or updated by changeStatuts()
 		//!!!!this is not the task instruction queue, but all the possible instruction queues (one for each mode)
-		vector<vector<Instr*>> myInstr;
+		std::vector<std::vector<Instr*>> myInstr;
 
-		//These vectors are used to calculate the mode index (performed in another entity)
+		//These std::vectors are used to calculate the mode index (performed in another entity)
 		//but they are parameters strictly related to the AVRTask itself
-		vector<double> OmegaMinus;
-		vector<double> OmegaPlus;
+		std::vector<double> OmegaMinus;
+		std::vector<double> OmegaPlus;
 
-	
 	public:
 
 		virtual ~AVRTask();
 
 		//Omega values to be passed in RPM
-		AVRTask(double angPeriod, double angPhase, double angDl, vector<string> instr, vector<double> Omegaplus, 
-			vector<double> Omegaminus, const std::string &name) throw(WrongParameterSize);
+		AVRTask(double angPeriod, double angPhase, double angDl,
+                const std::vector<std::string>& instr,
+                const std::vector<double>& Omegaplus, 
+                const std::vector<double>& Omegaminus, const std::string &name) throw(WrongParameterSize);
 		
 		virtual void newRun();
 		
@@ -83,11 +83,14 @@ namespace RTSim {
 		virtual void activate(int mode, Tick rdl) throw (ModeOutOfIndex);
 
 		//Updates his own Instr matrix with values passed by param
-		void buildInstr(vector<string> param)  throw(ParseExc);
+		void buildInstr(const std::vector<std::string> &param)  throw(ParseExc);
 
 		//Updates task parameters
 		//Only when the task is not active to be called before activate();
-		void changeStatus(double angper, double angphase, double angdl, vector<string> instr, vector<double> OmegaM, vector<double> OmegaP) throw (TaskAlreadyActive);
+		void changeStatus(double angper, double angphase, double angdl,
+                          const std::vector<std::string>& instr,
+                          const std::vector<double>& OmegaM,
+                          const std::vector<double>& OmegaP) throw (TaskAlreadyActive);
 
 		double getAngularPhase(){
 			return AngularPhase;
@@ -101,18 +104,17 @@ namespace RTSim {
 			return AngularDl;
 		}
 
-		vector<double> getOmegaPlus(){
+		std::vector<double> getOmegaPlus(){
 			return OmegaPlus;
 		}
 
-		vector<double> getOmegaMinus(){
+		std::vector<double> getOmegaMinus(){
 			return OmegaMinus;
 		}
 
-		virtual Tick getWCET(int index) throw (ModeOutOfIndex);
+		virtual Tick getWCET(int index) const throw (ModeOutOfIndex);
 
-		static AVRTask* createInstance(vector<string>& par);
-
+		static std::unique_ptr<AVRTask> createInstance(const std::vector<std::string>& par);
 	};
 
 };

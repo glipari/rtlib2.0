@@ -33,7 +33,7 @@ namespace RTSim {
 		BufferedModes.clear();
 	}
 
-	void AVRTask::buildInstr(vector<string> param) throw (ParseExc){
+	void AVRTask::buildInstr(const vector<string>& param) throw (ParseExc){
 		
 		if (myInstr.size() > 0){
 			vector<vector<Instr*>>::iterator s = myInstr.begin();
@@ -64,14 +64,14 @@ namespace RTSim {
 				par_list.push_back(string(getName()));
 
 
-				auto_ptr<RTSim::Instr> curr = genericFactory<RTSim::Instr>::instance().create(token, par_list);
+				unique_ptr<RTSim::Instr> curr = genericFactory<RTSim::Instr>::instance().create(token, par_list);
 
-				RTSim::Instr* curr_instr = curr.release();
+				//RTSim::Instr* curr_instr = curr.release();
 				
-				if (!curr_instr)
+				if (!curr)
 					throw ParseExc("insertCode", token);
 
-				myCurrInstr.push_back(curr_instr);
+				myCurrInstr.push_back(curr.release());
 			}
 
 			this->myInstr.push_back(myCurrInstr);
@@ -79,7 +79,10 @@ namespace RTSim {
 	}
 
 	AVRTask::AVRTask(double angPeriod, double angPhase, double angDl, 
-		vector<string> instr, vector<double> Omegaplus, vector<double> Omegaminus, const std::string &name) throw(WrongParameterSize)
+                     const vector<string>& instr,
+                     const vector<double>& Omegaplus,
+                     const vector<double>& Omegaminus,
+                     const std::string &name) throw(WrongParameterSize)
 		:Task(NULL, 0, 0, name, 1000), AngularPeriod(angPeriod), AngularPhase(angPhase), AngularDl(angDl)
 	{
 		if (instr.size() != Omegaminus.size() || instr.size() != Omegaplus.size())
@@ -109,7 +112,10 @@ namespace RTSim {
 
 	//not to be called when task is active
 	//only when a job is finished and before activate the next one
-	void AVRTask::changeStatus(double angper, double angphase, double angdl, vector<string> instr, vector<double> OmegaM, vector<double> OmegaP) throw (TaskAlreadyActive){
+	void AVRTask::changeStatus(double angper, double angphase, double angdl,
+                               const vector<string>& instr,
+                               const vector<double>& OmegaM,
+                               const vector<double>& OmegaP) throw (TaskAlreadyActive) {
 		if (instr.size() != OmegaM.size() || instr.size() != OmegaP.size())
 			throw WrongParameterSize("instruction, OmegaPlus and OmegaMinus sizes must be all equal to the max mode number");
 		if (isActive())
@@ -156,7 +162,7 @@ namespace RTSim {
 
 	}
 
-	Tick AVRTask::getWCET(int index) throw (ModeOutOfIndex){
+	Tick AVRTask::getWCET(int index) const throw (ModeOutOfIndex) {
 
 		if (index >= myInstr.size() || index < 0)
 			throw ModeOutOfIndex("Mode Index out of range");
@@ -173,7 +179,7 @@ namespace RTSim {
 	}
 
 
-	AVRTask* AVRTask::createInstance(vector<string>& par){
+	unique_ptr<AVRTask> AVRTask::createInstance(const vector<string>& par){
 
 		double angPer = atof(par[0].c_str());
 		double angPhase = atof(par[1].c_str());
@@ -181,7 +187,6 @@ namespace RTSim {
 		
 		int Nmodes = par.size() - 5;
 
-		
 		vector<string> instr;
 		int i = 0;
 		while (i < Nmodes){
@@ -209,11 +214,11 @@ namespace RTSim {
 			prev_pos = pos + 1;
 			omegaMinus.push_back(prova);
 		}
-
-		const char* n = "";
+        
+		string n = "";
 		if (5+i < par.size())
-			n = par[5+i].c_str();	
+			n = par[5+i];	
 
-		return new AVRTask(angPer, angPhase, angDl, instr, omegaPlus, omegaMinus, n);
+		return unique_ptr<AVRTask> (new AVRTask(angPer, angPhase, angDl, instr, omegaPlus, omegaMinus, n));
 	}
 }

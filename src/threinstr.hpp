@@ -72,7 +72,7 @@ namespace RTSim {
          */
         ThreInstr(Task * f, const std::string& th, const std::string &n = "");
 
-        static std::unique_ptr<ThreInstr> createInstance(std::vector<std::string> &par);
+        static std::unique_ptr<ThreInstr> createInstance(const std::vector<std::string> &par);
 
         ///Virtual methods from Instr
         virtual void schedule();

@@ -49,7 +49,7 @@ namespace RTSim {
         
         void probe(DeadEvt& e);
         
-        void attachToTask(Task* t);
+        void attachToTask(Task& t);
         
     };
 }

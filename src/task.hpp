@@ -337,18 +337,18 @@ namespace RTSim {
         */
         //virtual void setTrace(Trace *t);
 
-        template <class TraceClass>
-        void setTrace(TraceClass to) {
-            // this cannot work. We should find a workaround
-            // for (auto x : instrQueue) 
-            //     x->setTrace(to);
+        // template <class TraceClass>
+        // void setTrace(TraceClass to) {
+        //     // this cannot work. We should find a workaround
+        //     // for (auto x : instrQueue) 
+        //     //     x->setTrace(to);
             
-            attach_stat(to, arrEvt);
-            attach_stat(to, fakeArrEvt);
-            attach_stat(to, endEvt);
-            attach_stat(to, schedEvt);
-            attach_stat(to, deschedEvt);
-        }
+        //     attach_stat(to, arrEvt);
+        //     attach_stat(to, fakeArrEvt);
+        //     attach_stat(to, endEvt);
+        //     attach_stat(to, schedEvt);
+        //     attach_stat(to, deschedEvt);
+        // }
         
 
         /** 

@@ -49,8 +49,7 @@ namespace RTSim {
         
         void probe(DeadEvt& e);
         
-        void attachToTask(Task* t);
-        
+        void attachToTask(Task &t);
     };
     
     class VirtualTrace {
@@ -63,7 +62,7 @@ namespace RTSim {
         
         void probe(EndEvt& e);
         
-        void attachToTask(Task* t);
+        void attachToTask(Task &t);
     };
 }
 

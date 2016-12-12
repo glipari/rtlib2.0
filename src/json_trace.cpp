@@ -63,12 +63,18 @@ namespace RTSim {
         writeTaskEvent(tt, "dline_miss");
     }
     
-    void JSONTrace::attachToTask(Task* t)
+    void JSONTrace::attachToTask(Task& t)
     {
-        new Particle<ArrEvt, JSONTrace>(&t->arrEvt, this);
-        new Particle<EndEvt, JSONTrace>(&t->endEvt, this);
-        new Particle<SchedEvt, JSONTrace>(&t->schedEvt, this);
-        new Particle<DeschedEvt, JSONTrace>(&t->deschedEvt, this);
-        new Particle<DeadEvt, JSONTrace>(&t->deadEvt, this);
+        // new Particle<ArrEvt, JSONTrace>(&t->arrEvt, this);
+        // new Particle<EndEvt, JSONTrace>(&t->endEvt, this);
+        // new Particle<SchedEvt, JSONTrace>(&t->schedEvt, this);
+        // new Particle<DeschedEvt, JSONTrace>(&t->deschedEvt, this);
+        // new Particle<DeadEvt, JSONTrace>(&t->deadEvt, this);
+
+        attach_stat(*this, t.arrEvt);
+        attach_stat(*this, t.endEvt);
+        attach_stat(*this, t.schedEvt);
+        attach_stat(*this, t.deschedEvt);
+        attach_stat(*this, t.deadEvt);
     }
 }

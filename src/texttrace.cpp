@@ -54,13 +54,18 @@ namespace RTSim {
 				<< tt->getArrival() << endl;
 		}
 
-		void TextTrace::attachToTask(Task* t)
+		void TextTrace::attachToTask(Task &t)
 		{
-			new Particle<ArrEvt, TextTrace>(&t->arrEvt, this);
+			/*new Particle<ArrEvt, TextTrace>(&t->arrEvt, this);
 			new Particle<EndEvt, TextTrace>(&t->endEvt, this);
 			new Particle<SchedEvt, TextTrace>(&t->schedEvt, this);
 			new Particle<DeschedEvt, TextTrace>(&t->deschedEvt, this);
-			new Particle<DeadEvt, TextTrace>(&t->deadEvt, this);
+			new Particle<DeadEvt, TextTrace>(&t->deadEvt, this);*/
+            attach_stat(*this, t.arrEvt);
+            attach_stat(*this, t.endEvt);
+            attach_stat(*this, t.schedEvt);
+            attach_stat(*this, t.deschedEvt);
+            attach_stat(*this, t.deadEvt);
 		}
     
         VirtualTrace::VirtualTrace(map<string, int> *r)
@@ -84,9 +89,10 @@ namespace RTSim {
             }
         }
 
-        void VirtualTrace::attachToTask(Task* t)
+        void VirtualTrace::attachToTask(Task& t)
         {
-            new Particle<EndEvt, VirtualTrace>(&t->endEvt, this);
+            //new Particle<EndEvt, VirtualTrace>(&t->endEvt, this);
+            attach_stat(*this, t.endEvt);
         }
     
 };
