@@ -31,19 +31,13 @@ namespace RTSim {
     using namespace std;
     using namespace parse_util;
 
-    ExecInstr::ExecInstr(Task *f, RandomVar *c, char *n) : 
-        Instr(f, n), cost(c), _endEvt(this) 
+    ExecInstr::ExecInstr(Task *f, unique_ptr<RandomVar> c, const string &n) : 
+        Instr(f, n), cost(std::move(c)), _endEvt(this) 
     {
         DBGTAG(_INSTR_DBG_LEV,"ExecInstr");
     }
 
-    ExecInstr::ExecInstr(Task *f, auto_ptr<RandomVar> &c, char *n) : 
-        Instr(f, n), cost(c), _endEvt(this) 
-    {
-        DBGTAG(_INSTR_DBG_LEV,"ExecInstr");
-    }
-
-    Instr *ExecInstr::createInstance(vector<string> &par)
+    Instr *ExecInstr::createInstance(const vector<string> &par)
     {
         Instr *temp = 0;
 
@@ -56,11 +50,11 @@ namespace RTSim {
             string p = get_param(par[0]);
             vector<string> parms = split_param(p);
 
-            auto_ptr<RandomVar> var(genericFactory<RandomVar>::instance().create(token,parms));
+            unique_ptr<RandomVar> var(genericFactory<RandomVar>::instance().create(token,parms));
     
             if (var.get() == 0) throw ParseExc("ExecInstr", par[0]);
 
-            temp = new ExecInstr(task, var);
+            temp = new ExecInstr(task, std::move(var));
         }
         return temp;
     }
@@ -162,10 +156,10 @@ namespace RTSim {
         
     }
 
-    void ExecInstr::setTrace(Trace *t) {
-        _endEvt.addTrace(t);
-    }
-
+    // void ExecInstr::setTrace(Trace *t) {
+    //     attach_stat(*t, _endEvt); 
+    //     //_endEvt.addTrace(t);
+    // }
 
     void ExecInstr::onEnd() 
     {
@@ -182,9 +176,7 @@ namespace RTSim {
 
         DBGPRINT("internal data set... now calling the _father->onInstrEnd()");
 
-        _father->onInstrEnd();
-
-        
+        _father->onInstrEnd();        
     }
 
 
@@ -198,17 +190,7 @@ namespace RTSim {
         _endEvt.drop();
 
         DBGPRINT("internal data reset...");
-
-        
     }
-
-
-    Instr *FixedInstr::createInstance(vector<string> &par)
-    {
-        Task *task = dynamic_cast<Task *>(Entity::_find(par[1]));
-        return new FixedInstr(task, atoi(par[0].c_str()));
-    }
-
 
     void ExecInstr::refreshExec(double oldSpeed, double newSpeed){
         Tick t = SIMUL.getTime();
@@ -224,4 +206,20 @@ namespace RTSim {
         _endEvt.post(t + tmp);
     }
 
+    /*---------------------------- */
+
+    FixedInstr::FixedInstr(Task *t, Tick duration, const std::string &n) : 
+        ExecInstr(t, unique_ptr<DeltaVar>(new DeltaVar(duration)), n)
+    {}
+
+    unique_ptr<Instr> FixedInstr::createInstance(const vector<string> &par)
+    {
+        Task *task = dynamic_cast<Task *>(Entity::_find(par[1]));
+        return unique_ptr<FixedInstr>(new FixedInstr(task, atoi(par[0].c_str())));
+    }
+
+
+
+
+    
 }

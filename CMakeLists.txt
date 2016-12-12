@@ -5,7 +5,8 @@ project (rtlib)
 find_package(metasim REQUIRED)
 
 # set metasim include dir
-set(metasim_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../METASIM/src")
+set(metasim_DIR "${PROJECT_SOURCE_DIR}/../metasim2.0")
+set(metasim_INCLUDE_DIRS "${metasim_DIR}/src")
 
 # Include dirs.
 add_subdirectory (src)

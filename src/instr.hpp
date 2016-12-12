@@ -41,7 +41,6 @@
 
 namespace RTSim {
 
-    using namespace std;
     using namespace MetaSim;
 
     class Task;
@@ -56,7 +55,6 @@ namespace RTSim {
     public: 
         InstrExc(const string &msg, const string &cl)
             :BaseExc(msg, cl, "InstrExc") {}
-
     };
 
     /**
@@ -130,7 +128,8 @@ namespace RTSim {
         */
         virtual Tick getWCET() const throw(RandomVar::MaxException) = 0;
 
-        virtual void setTrace(Trace*) = 0;
+        // Commented because the tracing mechanism has changed wildily
+        //virtual void setTrace(Trace*) = 0;
 
         // virtual methods from entity
         virtual void newRun() = 0;
@@ -154,7 +153,7 @@ namespace RTSim {
         EndInstrEvt(Instr * in) : 
             MetaSim::Event(Event::_DEFAULT_PRIORITY-3), _instr(in) {} 
         virtual void doit();
-        virtual Instr* getInstruction() const;        
+        Instr* getInstruction() const;        
     };
 } // namespace RTSim 
 

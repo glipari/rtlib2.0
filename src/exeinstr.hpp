@@ -41,7 +41,6 @@
 
 namespace RTSim {
 
-  using namespace std;
   using namespace MetaSim;
 
   /** 
@@ -55,75 +54,79 @@ namespace RTSim {
       @version 2.0 
       @see Instr */
 
-  class ExecInstr : public Instr {
-  protected:
-    /// End of Instruction flag
-    bool flag;         
-    /// Random var representing the instruction cost/duration
-    auto_ptr<RandomVar> cost;
-    /// Actual Real-Time execution of the instruction
-    Tick execdTime;    
-    /// Duration of the current instruction 
-    Tick currentCost;  
-    /// Execution time spent by the instruction
-    double actTime;   
-    /// Last instant of time this instruction was scheduled
-    Tick lastTime;     
-    /// True if the instruction is currently executing
-    bool executing;    
-  public:
+    class ExecInstr : public Instr {
+    protected:
+        /// End of Instruction flag
+        bool flag;         
+        /// Random var representing the instruction cost/duration
+        std::unique_ptr<RandomVar> cost;
+        /// Actual Real-Time execution of the instruction
+        Tick execdTime;    
+        /// Duration of the current instruction 
+        Tick currentCost;  
+        /// Execution time spent by the instruction
+        double actTime;   
+        /// Last instant of time this instruction was scheduled
+        Tick lastTime;     
+        /// True if the instruction is currently executing
+        bool executing;    
+    public:
 
-    EndInstrEvt _endEvt;
-    /** This is the constructor of the ExecInstr
-	@param f is a pointer to the task containing the pseudo intruction
-	@param c is a random variable containing the duration of the instruction
-	@param n is the instruction name
-    */
-    ExecInstr(Task *f, RandomVar *c, char *n = "");
-    ExecInstr(Task *f, auto_ptr<RandomVar> &c, char *n="");
-    static Instr *createInstance(vector<string> &par);
+        EndInstrEvt _endEvt;
+        /** This is the constructor of the ExecInstr
+            @param f is a pointer to the task containing the pseudo intruction
+            @param c is a random variable containing the duration of the instruction
+            @param n is the instruction name
+        */
+        ExecInstr(Task *f, unique_ptr<RandomVar> c, const std::string &n = "");
+        static Instr *createInstance(const std::vector<std::string> &par);
 
-    virtual ~ExecInstr() {}
+        virtual ~ExecInstr() {}
 
-    //Virtual methods from Instr
-    virtual void schedule() throw (InstrExc);
-    virtual void deschedule();
-    virtual void onEnd();
-    virtual void reset();
-    virtual Tick getDuration() const;
-    virtual Tick getWCET() const throw(RandomVar::MaxException);
-    virtual Tick getExecTime() const;
-    virtual void setTrace(Trace *t);
+        //Virtual methods from Instr
+        virtual void schedule() throw (InstrExc);
+        virtual void deschedule();
+        virtual void onEnd();
+        virtual void reset();
+        virtual Tick getDuration() const;
+        virtual Tick getWCET() const throw(RandomVar::MaxException);
+        virtual Tick getExecTime() const;
 
-    //From Entity...
-    virtual void newRun();
-    virtual void endRun();
+        /* Commented, because the tracing mechanism has changed */ 
+        // virtual void setTrace(Trace *t);
+
+        template<class TraceClass>
+        void setTrace(TraceClass &traceobj) {
+            attach_stat(traceobj, _endEvt);
+        }
+        
+
+        //From Entity...
+        virtual void newRun();
+        virtual void endRun();
 
 
-    /** Function inherited from Instr. It refreshes the state of the 
-     *  executing instruction when a change of the CPU speed occurs. 
-     */ 
-    void refreshExec(double oldSpeed, double newSpeed);
+        /** Function inherited from Instr. It refreshes the state of the 
+         *  executing instruction when a change of the CPU speed occurs. 
+         */ 
+        void refreshExec(double oldSpeed, double newSpeed);
+    };
 
-  };
-
-  /**
-     \ingroup instr
+    /**
+       \ingroup instr
      
-     This is defined for user's commodity. Actually it is an ExecInstr
-     having a fixed duration.
-     @author Luigi Palopoli, Giuseppe Lipari, Gerardo Lamastra, Antonio Casile
-     @version 2.0
-     @see Instr, Task 
-  */
-  class FixedInstr : public ExecInstr {
-  public:
-    FixedInstr(Task *t, Tick duration, char *n = "") : 
-      ExecInstr(t, new DeltaVar(duration), n)
-    {}
+       This is defined for user's commodity. Actually it is an ExecInstr
+       having a fixed duration.
+       @author Luigi Palopoli, Giuseppe Lipari, Gerardo Lamastra, Antonio Casile
+       @version 2.0
+       @see Instr, Task 
+    */
+    class FixedInstr : public ExecInstr {
+    public:
+        FixedInstr(Task *t, Tick duration, const std::string &n= ""); 
 
-    static Instr *createInstance(vector<string> &par);
-  };
+        static std::unique_ptr<Instr> createInstance(const std::vector<std::string> &par);
+    };
 
 } // namespace RTSim 
 
