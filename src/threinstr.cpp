@@ -19,13 +19,17 @@
 
 namespace RTSim {
 
-    ThreInstr::ThreInstr(Task * f, const string& th, char *n)
+    using namespace std;
+    
+    ThreInstr::ThreInstr(Task * f, const string& th, const string &n)
         : Instr(f, n), _endEvt(this), _threEvt(f, this), _th(th)  
     {}
 
-    Instr* ThreInstr::createInstance(vector<string> &par)
+    unique_ptr<ThreInstr> ThreInstr::createInstance(const vector<string> &par)
     {
-        return new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), par[0]);
+        unique_ptr<ThreInstr> ptr(new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), par[0]));
+        
+        return ptr;
     }
 
     void ThreInstr::endRun() 
@@ -40,8 +44,6 @@ namespace RTSim {
         DBGPRINT("Scheduling ThreInstr named: " << getName());
 
         _endEvt.post(SIMUL.getTime());
-
-    
     }
 
     void ThreInstr::deschedule()
@@ -50,11 +52,11 @@ namespace RTSim {
         _endEvt.drop();
     }
 
-    void ThreInstr::setTrace(Trace *t) 
-    {
-        _endEvt.addTrace(t); 
-        _threEvt.addTrace(t);
-    }
+    // void ThreInstr::setTrace(Trace *t) 
+    // {
+    //     _endEvt.addTrace(t); 
+    //     _threEvt.addTrace(t);
+    // }
 
     void ThreInstr::onEnd() 
     {
@@ -75,10 +77,6 @@ namespace RTSim {
 
         DBGPRINT("After lowing threshold for task " << _father->getName());
 
-        _threEvt.process();
-
-    
-
+        _threEvt.process();    
     }
-
 }

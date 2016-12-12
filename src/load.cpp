@@ -139,7 +139,8 @@ namespace RTSim {
     // deleted by the task destructor. 
     void CTGen::sinthesize(Task *t, int i)
     {
-        t->addInstr(new ExecInstr(t, get(i)));
+        unique_ptr<RandomVar> ptr(get(i));
+        t->addInstr(new ExecInstr(t, std::move(ptr)));
     }
 
     void CTGen::rebuild()
@@ -222,7 +223,9 @@ namespace RTSim {
 
     void ConstCTGen::sinthesize(Task *t, int i)
     {
-        t->addInstr(new ExecInstr(t, new DeltaVar(* dynamic_cast< DeltaVar* >(get(i)))));
+        unique_ptr<RandomVar> ptr(get(i));
+        
+        t->addInstr(new ExecInstr(t, std::move(ptr))); //new DeltaVar(* dynamic_cast< DeltaVar* >(get(i)))));
     }
 
     Tick UniformCTGen::getMin(int i) const 

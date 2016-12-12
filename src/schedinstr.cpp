@@ -18,11 +18,13 @@
 
 namespace RTSim {
 
-    SchedInstr::SchedInstr(Task * f, const string& s, char *n)
+    using namespace std;
+    
+    SchedInstr::SchedInstr(Task * f, const string& s, const string &n)
         : Instr(f, n), _endEvt(this), _threEvt(f, this) 
     {}
 
-    Instr* SchedInstr::createInstance(vector<string> &par)
+    Instr* SchedInstr::createInstance(const vector<string> &par)
     {
         return new SchedInstr(dynamic_cast<Task *>(Entity::_find(par[1])),par[0]);
     }
@@ -47,11 +49,11 @@ namespace RTSim {
         _endEvt.drop();
     }
 
-    void SchedInstr::setTrace(Trace *t) 
-    {
-        _endEvt.addTrace(t); 
-        _threEvt.addTrace(t);
-    }
+    // void SchedInstr::setTrace(Trace *t) 
+    // {
+    //     _endEvt.addTrace(t); 
+    //     _threEvt.addTrace(t);
+    // }
 
     void SchedInstr::onEnd() 
     {

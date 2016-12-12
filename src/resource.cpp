@@ -32,16 +32,17 @@ namespace RTSim {
 
     Resource::Resource(const string &n, int nr) :
         Entity(n),
-        _owner(0), 
         _total(nr),
-        _available(nr)
+        _available(nr),
+        _owner(0)
     { 
     }
 
     Resource::Resource(const Resource &r) :
-        Entity(r.getName()+"_copy"), _owner(0), 
+        Entity(r.getName()+"_copy"), 
         _total(r.total()),
-        _available(r.total())
+        _available(r.total()),
+        _owner(0)
     { 
     }
 
