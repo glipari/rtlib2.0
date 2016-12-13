@@ -4,7 +4,6 @@ copyright            : (C) 2014 Simoncelli Stefano
 email                : simoncelli.stefano@hotmail.it
 ***************************************************************************/
 
-
 #include <AVRTask.hpp>
 #define _USE_MATH_DEFINES 
 #include <math.h>
@@ -142,8 +141,8 @@ namespace RTSim {
 
 		vector<RTSim::Instr*> myCurrInstr = myInstr.at(mode);
 		vector<RTSim::Instr*>::iterator j = myCurrInstr.begin();
-		while (j!=myCurrInstr.end()){
-			addInstr(*j);
+		while (j != myCurrInstr.end()) {
+			addInstr(unique_ptr<Instr>(*j));
 			j++;
 		}
 	
@@ -169,7 +168,7 @@ namespace RTSim {
 		Tick tt = 0;
 		
 		vector<RTSim::Instr*> myCurrInstr = myInstr.at(index);
-		ConstInstrIterator i = myCurrInstr.begin();
+		auto i = myCurrInstr.begin();
 		while (i != myCurrInstr.end()) {
 				tt += (*i)->getWCET();
 				i++;

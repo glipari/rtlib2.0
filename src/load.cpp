@@ -140,7 +140,8 @@ namespace RTSim {
     void CTGen::sinthesize(Task *t, int i)
     {
         unique_ptr<RandomVar> ptr(get(i));
-        t->addInstr(new ExecInstr(t, std::move(ptr)));
+        unique_ptr<ExecInstr> instr(new ExecInstr(t, std::move(ptr)));
+        t->addInstr(std::move(instr));
     }
 
     void CTGen::rebuild()
@@ -224,8 +225,9 @@ namespace RTSim {
     void ConstCTGen::sinthesize(Task *t, int i)
     {
         unique_ptr<RandomVar> ptr(get(i));
+        unique_ptr<ExecInstr> instr(new ExecInstr(t, std::move(ptr)));
         
-        t->addInstr(new ExecInstr(t, std::move(ptr))); //new DeltaVar(* dynamic_cast< DeltaVar* >(get(i)))));
+        t->addInstr(std::move(instr)); //new DeltaVar(* dynamic_cast< DeltaVar* >(get(i)))));
     }
 
     Tick UniformCTGen::getMin(int i) const 
@@ -402,17 +404,18 @@ namespace RTSim {
     Task *RandomTaskSetFactory::sinthesize(int i)
     {
         Task *t;
+
+        unique_ptr<RandomVar> iat(iatGen->get(i));
+        
         if (offGen) 
-            t = new Task(iatGen->get(i),dtGen->get(i),offGen->get(i));
+            t = new Task(std::move(iat), dtGen->get(i), offGen->get(i));
         else 
-            t = new Task(iatGen->get(i),dtGen->get(i));
+            t = new Task(std::move(iat), dtGen->get(i));
         
         t->setAbort(false);
         
         ctGen->sinthesize(t,i);
 
-//         = new Task(iatGen->get(i));
-//         ctGen->sinthesize(t,i);
         return t;
     }
 

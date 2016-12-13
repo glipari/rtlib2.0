@@ -13,6 +13,7 @@
  ***************************************************************************/
 #include <fifosched.hpp>
 #include <kernel.hpp>
+#include <factory.hpp>
 
 namespace RTSim {
 
@@ -40,4 +41,5 @@ namespace RTSim {
         // time quantum)
         return unique_ptr<FIFOScheduler>(new FIFOScheduler);
     }
+
 }

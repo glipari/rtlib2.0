@@ -36,22 +36,31 @@ namespace RTSim {
         discardInstrs(true);        
     }
     
-    Task::Task(RandomVar *iat, Tick rdl, Tick ph,
+    Task::Task(unique_ptr<RandomVar> iat, Tick rdl, Tick ph,
                const std::string &name, long qs, Tick maxC)
-	: Entity(name), 
-	  int_time(iat), lastArrival(0), phase(ph), 
-	  arrival(0), execdTime(0), _maxC(maxC), 
-	  arrQueue(), arrQueueSize(qs), 
-	  state(TSK_IDLE),
-	  instrQueue(),
-	  actInstr(),
-	  _kernel(NULL),
-	  _lastSched(0),
-	  _dl(0), _rdl(rdl),
-	  feedback(NULL),
-	  arrEvt(this), endEvt(this), schedEvt(this),
-	  deschedEvt(this), fakeArrEvt(this), killEvt(this), 
-	  deadEvt(this, false, false)
+        : Entity(name), 
+          int_time(std::move(iat)),
+          lastArrival(0),
+          phase(ph), 
+          arrival(0),
+          execdTime(0),
+          _maxC(maxC), 
+          arrQueue(),
+          arrQueueSize(qs), 
+          state(TSK_IDLE),
+          instrQueue(),
+          actInstr(),
+          _kernel(nullptr),
+          _lastSched(0),
+          _dl(0), _rdl(rdl),
+          feedback(nullptr),
+          arrEvt(this),
+          endEvt(this),
+          schedEvt(this),
+          deschedEvt(this),
+          fakeArrEvt(this),
+          killEvt(this), 
+          deadEvt(this, false, false)
     {
     }
     
@@ -61,11 +70,11 @@ namespace RTSim {
             actInstr = instrQueue.begin();
         } else throw EmptyTask();
         
-	state = TSK_IDLE;
+        state = TSK_IDLE;
         while (chkBuffArrival()) unbuffArrival();
         
         lastArrival = arrival = phase;
-        if (int_time != NULL) arrEvt.post(arrival);
+        if (int_time != nullptr) arrEvt.post(arrival);
         _dl = 0;
     }
     
@@ -85,12 +94,12 @@ namespace RTSim {
     /* Methods from the interface... */
     bool Task::isActive(void) const
     {
-	return state != TSK_IDLE;
+        return state != TSK_IDLE;
     }
     
     bool Task::isExecuting(void) const
     {
-	return state == TSK_EXEC;
+        return state == TSK_EXEC;
     };
     
     void Task::schedule(void)
@@ -115,35 +124,16 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         
-        if (_kernel != NULL) throw KernAlreadySet();
+        if (_kernel != nullptr) throw KernAlreadySet();
         
-        _kernel = k;
-        
-        
+        _kernel = k;   
     }
-    
-    // void Task::setTrace(Trace *t)
-    // {
-    //     // For the moment, let's remove this...
-    //     // Propagate tracing over Pseudo Instructions        
-    //     InstrIterator i = instrQueue.begin();
-    //     while (i != instrQueue.end()) {
-    //         (*i)->setTrace(t);
-    //         i++;
-    //     }
         
-    //     arrEvt.addTrace(t);
-    //     fakeArrEvt.addTrace(t);
-    //     endEvt.addTrace(t);
-    //     schedEvt.addTrace(t);
-    //     deschedEvt.addTrace(t);
-    // }
-    
     void Task::reactivate()
     {
         Tick v;
         
-        if (int_time != NULL) {
+        if (int_time != nullptr) {
             v = (Tick) int_time->get();
             if (v > 0) arrEvt.post(SIMUL.getTime() + v);
         }
@@ -162,12 +152,12 @@ namespace RTSim {
         actInstr = instrQueue.begin();
         
         // reset all instructions
-        ConstInstrIterator p = instrQueue.begin();
+        auto p = instrQueue.begin();
         while (p != instrQueue.end()) {
             (*p)->reset();
             p++;
         }
-	state = TSK_READY;
+        state = TSK_READY;
         _dl = getArrival() + _rdl;
         if (_dl >= SIMUL.getTime()) deadEvt.post(_dl);
         
@@ -175,19 +165,19 @@ namespace RTSim {
 
     void Task::block() 
     {
-	// check that the task is not idle and is not already blocked
-	if (state == TSK_IDLE || state == TSK_BLOCKED) 
-	    throw string("Task cannot be blocked, because it is ") + 
-		(state == TSK_IDLE ? "idle" : "blocked");
-	_kernel->suspend(this);
-	state = TSK_BLOCKED;
-	_kernel->dispatch();
+        // check that the task is not idle and is not already blocked
+        if (state == TSK_IDLE || state == TSK_BLOCKED) 
+            throw string("Task cannot be blocked, because it is ") + 
+                (state == TSK_IDLE ? "idle" : "blocked");
+        _kernel->suspend(this);
+        state = TSK_BLOCKED;
+        _kernel->dispatch();
     }
 
     void Task::unblock()
     {
-	state = TSK_READY;
-	_kernel->onArrival(this);
+        state = TSK_READY;
+        _kernel->onArrival(this);
     }
     
     Tick Task::getArrival() const
@@ -232,37 +222,36 @@ namespace RTSim {
     
     void Task::unbuffArrival()
     {
-        
         if (!arrQueue.empty()) {
             arrQueue.pop_back();
         }
     }
     
-    RandomVar *Task::changeIAT(RandomVar *iat)
+    unique_ptr<RandomVar> Task::changeIAT(unique_ptr<RandomVar> iat)
     {
-        RandomVar *ret = int_time;
+        unique_ptr<RandomVar> ret = std::move(int_time);
         
-        int_time = iat;
+        int_time = std::move(iat);
         return ret;
     }
     
-    void Task::addInstr(Instr *instr)
+    void Task::addInstr(unique_ptr<Instr> instr)
     {
-        instrQueue.push_back(instr);
+        instrQueue.push_back(std::move(instr));
         DBGTAG(_TASK_DBG_LEV, "Task::addInstr() : Instruction added");
     }
         
     void Task::discardInstrs(bool selfDestruct)
     {
-        // Unset all the Instructions
-        if (selfDestruct) {
-            ConstInstrIterator p = instrQueue.begin();
+        // // Unset all the Instructions
+        // if (selfDestruct) {
+        //     auto p = instrQueue.begin();
             
-            while (p != instrQueue.end()) {
-                delete *p;
-                p++;
-            }
-        }
+        //     while (p != instrQueue.end()) {
+        //         delete *p;
+        //         p++;
+        //     }
+        // }
         // delete all list entries
         instrQueue.clear();
     }
@@ -320,7 +309,7 @@ namespace RTSim {
         
         endEvt.setCPU(cpu_index);
         _kernel->onEnd(this);
-	state = TSK_IDLE;
+        state = TSK_IDLE;
         
         if (feedback) {
             DBGPRINT("Calling the feedback module");
@@ -419,7 +408,7 @@ namespace RTSim {
         schedEvt.setCPU(cpu_index);
         deschedEvt.drop();
         
-	state = TSK_EXEC;
+        state = TSK_EXEC;
         
         (*actInstr)->schedule();
         
@@ -449,7 +438,7 @@ namespace RTSim {
         
         (*actInstr)->deschedule();
         
-	state = TSK_READY;
+        state = TSK_READY;
     }
     
     void Task::onInstrEnd()
@@ -460,8 +449,8 @@ namespace RTSim {
             DBGPRINT("not active...");
             throw TaskNotActive("onInstrEnd() on a non-active task");
         }
-	// this exception conflicts with the implementation of suspendInstr. 
-	// I am removing it for the moment
+        // this exception conflicts with the implementation of suspendInstr. 
+        // I am removing it for the moment
         // if (not isExecuting()) {
         //     DBGPRINT("not executing...");
         //     throw TaskNotExecuting("OnInstrEnd() on a non executing task");
@@ -470,7 +459,7 @@ namespace RTSim {
         actInstr++;
         if (actInstr == instrQueue.end()) {
             DBGPRINT("End of instruction list");
-	    endEvt.post(SIMUL.getTime());
+            endEvt.post(SIMUL.getTime());
         } else if (isExecuting()) {          
             (*actInstr)->schedule();
             DBGPRINT("Next instr scheduled");
@@ -504,7 +493,7 @@ namespace RTSim {
     {
         Tick tt = 0;
         if (_maxC == 0) {
-            ConstInstrIterator i = instrQueue.begin();
+            auto i = instrQueue.begin();
             while (i != instrQueue.end()) {
                 tt += (*i)->getWCET();
                 i++;
@@ -534,14 +523,12 @@ namespace RTSim {
             DBGPRINT("");
             
             unique_ptr<Instr> curr = genericFactory<Instr>::instance().create(token, par_list);
-            
-            //Instr *curr_instr = curr.release();
-            
+                        
             if (!curr) throw ParseExc("insertCode", token);
             
             DBGPRINT("Instr " << curr->getName() << "  created.");
             
-            addInstr(curr.release());
+            addInstr(std::move(curr));
             
             printInstrList();
         }
@@ -588,7 +575,7 @@ namespace RTSim {
         else return "(nil)";
     }
     
-    Task* Task::createInstance(vector<string> &par)
+    unique_ptr<Task> Task::createInstance(const vector<string> &par)
     {
         unique_ptr<RandomVar> i;
         if (strcmp(par[0].c_str(), "0"))
@@ -602,7 +589,7 @@ namespace RTSim {
         if (par.size() > 4) q = 1000;//atoi(par[4].c_str()); // TODO: WHY?
         bool a = true;
         if (par.size() > 5 && par[5] != "false") a = false;
-        Task* t = new Task(i.release(), d, p, n, q, a);
+        unique_ptr<Task> t(new Task(std::move(i), d, p, n, q, a));
         return t;
     }
     

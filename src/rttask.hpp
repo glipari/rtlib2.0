@@ -63,7 +63,7 @@ namespace RTSim {
             - PeriodicTask *p = new PeriodicTask(10, 10, 0, "task1");
 	
         */
-        static PeriodicTask* createInstance(vector<string>& par);
+        static std::unique_ptr<PeriodicTask> createInstance(const vector<string>& par);
     };
 
 } // namespace RTSim 

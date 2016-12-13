@@ -22,7 +22,7 @@
 namespace RTSim {
 
     const string FIFOName("FIFOSched");
-    const string FPName("FPSched");
+        const string FPName("FPSched");
     const string EDFName("EDFSched");
     const string RRName("RRSched");
 
@@ -32,10 +32,7 @@ namespace RTSim {
         the scheduler.
     */ 
     namespace __sched_stub
-    {
-        static registerInFactory<Scheduler, FIFOScheduler, string>
-        registerfifo(FIFOName);
-        
+    {        
         static registerInFactory<Scheduler, FPScheduler, string>
         registerfp(FPName);
         
@@ -44,6 +41,9 @@ namespace RTSim {
         
         static registerInFactory<Scheduler, RRScheduler, string>
         registerrr(RRName);
+
+        static registerInFactory<Scheduler, FIFOScheduler, string>
+        registerfifo(FIFOName);    
     }
     void __regsched_init() {}
 } // namespace RTSim

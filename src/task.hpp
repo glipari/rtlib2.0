@@ -71,7 +71,7 @@ namespace RTSim {
         Task & operator=(const Task &);
 
     protected:
-        MetaSim::RandomVar *int_time;  // The task is owner of this varible
+        std::unique_ptr<MetaSim::RandomVar> int_time;  // The task is owner of this varible
         MetaSim::Tick lastArrival;     // The arrival of the last instance!
         MetaSim::Tick phase;           // Initial phasing for first arrival
         MetaSim::Tick arrival;         // Arrival time of the current (last) instance
@@ -85,9 +85,9 @@ namespace RTSim {
         //bool active;           // true if the current request has not completed
         //bool executing;        // true if the task is currently executing
 
-        typedef std::vector<Instr *> InstrList;
-        typedef std::vector<Instr *>::iterator InstrIterator;
-        typedef std::vector<Instr *>::const_iterator ConstInstrIterator;
+        typedef std::vector<std::unique_ptr<Instr> > InstrList;
+        typedef std::vector<std::unique_ptr<Instr> >::iterator InstrIterator;
+        //typedef std::vector<Instr *>::const_iterator ConstInstrIterator;
         InstrList instrQueue;
         InstrIterator actInstr;
 
@@ -110,7 +110,6 @@ namespace RTSim {
         DeschedEvt deschedEvt;
         FakeArrEvt fakeArrEvt;
         KillEvt killEvt;
-
         DeadEvt deadEvt;
         
         /**
@@ -248,7 +247,7 @@ namespace RTSim {
             parameter is not used for the simulation itself, but only 
             for some algorithm, or for analysis). See getWCET(). */
 
-        Task(RandomVar *iat, Tick rdl, Tick ph = 0, 
+        Task(std::unique_ptr<RandomVar> iat, Tick rdl, Tick ph = 0, 
              const std::string &name = "", 
              long qs = 1000, Tick maxC=0);
 
@@ -262,7 +261,7 @@ namespace RTSim {
         /**
            For the abstract factory
         */
-        static Task* createInstance(vector<string> &par);
+        static std::unique_ptr<Task> createInstance(const vector<string> &par);
 
         /**
            Initializes the internal task structures at the beginning of each run.
@@ -330,26 +329,7 @@ namespace RTSim {
 
 
         void block();
-        void unblock();
-
-        /** 
-            Specify that this task has to be traced 
-        */
-        //virtual void setTrace(Trace *t);
-
-        // template <class TraceClass>
-        // void setTrace(TraceClass to) {
-        //     // this cannot work. We should find a workaround
-        //     // for (auto x : instrQueue) 
-        //     //     x->setTrace(to);
-            
-        //     attach_stat(to, arrEvt);
-        //     attach_stat(to, fakeArrEvt);
-        //     attach_stat(to, endEvt);
-        //     attach_stat(to, schedEvt);
-        //     attach_stat(to, deschedEvt);
-        // }
-        
+        void unblock();        
 
         /** 
             Adds a new instruction at the end of the instruction list. This
@@ -360,7 +340,7 @@ namespace RTSim {
             destroyed by the Task destructor. Therefore, the owner of the
             object pointed by instr is the task.
         */
-        void addInstr(Instr *instr);
+        void addInstr(std::unique_ptr<Instr> instr);
 
         /** 
             Removes an instruction from the instruction list. This method
@@ -407,7 +387,7 @@ namespace RTSim {
             of the random variable with another function. This function
             should not return anything.
         */
-        RandomVar *changeIAT(RandomVar *iat);
+        unique_ptr<RandomVar> changeIAT(std::unique_ptr<RandomVar> iat);
 
         /** 
             From AbsTask interface...

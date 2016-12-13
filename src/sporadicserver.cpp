@@ -17,16 +17,13 @@ namespace RTSim {
         repl_queue(),
         capacity_queue(),
         _replEvt(this, &SporadicServer::onReplenishment, 
-		 Event::_DEFAULT_PRIORITY - 1),
-	_idleEvt(this, &SporadicServer::onIdle),
+                 Event::_DEFAULT_PRIORITY - 1),
+        _idleEvt(this, &SporadicServer::onIdle),
         vtime()
     {
         DBGENTER(_SERVER_DBG_LEV);
         DBGPRINT(s);
         dline = p;
-
-        // register_handler(_replEvt, this, &SporadicServer::onReplenishment); 
-        // register_handler(_idleEvt, this, &SporadicServer::onIdle); 
     }
 
     void SporadicServer::newRun()
@@ -152,8 +149,8 @@ namespace RTSim {
 
         check_repl();
 	
-	//inserted by rodrigo seems we do not stop the capacity_timer
-	vtime.stop();
+        //inserted by rodrigo seems we do not stop the capacity_timer
+        vtime.stop();
 
         if (capacity_queue.size() > 0) {
             repl_t r = capacity_queue.front();
@@ -365,12 +362,10 @@ namespace RTSim {
         }
         return ret;    
     }
- Tick SporadicServer::changeQ(const Tick &n)
-{
-  Q=n;
-  return 0;
-}
-
-
+    Tick SporadicServer::changeQ(const Tick &n)
+    {
+        Q=n;
+        return 0;
+    }
 }
 
