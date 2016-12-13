@@ -34,8 +34,8 @@ namespace RTSim {
         _schedEvt(this, &Server::onSched),
         _deschedEvt(this, &Server::onDesched),
         _dispatchEvt(this, &Server::onDispatch, Event::_DEFAULT_PRIORITY + 5),
-        sched_(0),
-        currExe_(0)
+        sched_(nullptr),
+        currExe_(nullptr)
     {
         DBGENTER(_SERVER_DBG_LEV);
         string s_name = parse_util::get_token(s);
@@ -47,24 +47,15 @@ namespace RTSim {
         DBGPRINT("PARAMETERS: ");
         for (unsigned int i=0; i<p.size(); ++i) DBGPRINT(p[i]);
 
-        unique_ptr<Scheduler> curr = FACT(Scheduler).create(s_name, p);
-        //sched_ = curr.release();
+        sched_ = FACT(Scheduler).create(s_name, p);
         if (!sched_) throw ParseExc("Server::Server()", s);
 
         sched_->setKernel(this);
-
-        // register all event handlers
-        //register_handler(_bandExEvt, this, &Server::onBudgetExhausted); 
-        //register_handler(_dlineMissEvt, this, &Server::onDlineMiss);
-        //register_handler(_rechargingEvt, this, &Server::onRecharging); 
-        //register_handler(_schedEvt, this, &Server::onSched); 
-        //register_handler(_deschedEvt, this, &Server::onDesched); 
-        //register_handler(_dispatchEvt, this, &Server::onDispatch); 
     }
 
     Server::~Server()
     {
-        delete sched_;
+        //delete sched_;
     }
 
     void Server::addTask(AbsRTTask &task, const string &params)
@@ -124,18 +115,18 @@ namespace RTSim {
         DBGENTER(_SERVER_DBG_LEV);
         sched_->extract(task);
 	
-        if (getProcessor(task) != NULL) {
+        if (getProcessor(task) != nullptr) {
             task->deschedule();
-            currExe_ = NULL;
-            sched_->notify(NULL);
+            currExe_ = nullptr;
+            sched_->notify(nullptr);
         }
     }
 
     void Server::dispatch()
     {
         DBGENTER(_SERVER_DBG_LEV);
-	_dispatchEvt.drop();
-	_dispatchEvt.post(SIMUL.getTime());
+        _dispatchEvt.drop();
+        _dispatchEvt.post(SIMUL.getTime());
     }
         
     CPU *Server::getProcessor(const AbsRTTask *) const
@@ -176,8 +167,8 @@ namespace RTSim {
 
         assert(status == EXECUTING);
         sched_->extract(t);
-        currExe_ = NULL;
-        sched_->notify(NULL); // round robin case
+        currExe_ = nullptr;
+        sched_->notify(nullptr); // round robin case
         dispatch();
     }
         
@@ -189,13 +180,13 @@ namespace RTSim {
 
         _dispatchEvt.drop();
 
-	if(currExe_ != NULL){
+        if(currExe_ != nullptr){
             currExe_->deschedule();
-            currExe_ = NULL;
+            currExe_ = nullptr;
         }
 
         kernel->suspend(this);
-        sched_->notify(NULL);
+        sched_->notify(nullptr);
         kernel->dispatch();
 
         executing_recharging();
@@ -224,8 +215,8 @@ namespace RTSim {
             executing_ready();
             // signal the task
             currExe_->deschedule();
-            currExe_ = NULL;
-            sched_->notify(NULL);
+            currExe_ = nullptr;
+            sched_->notify(nullptr);
         }   
     }
 
@@ -239,33 +230,33 @@ namespace RTSim {
 
         assert(status == RECHARGING);
 
-        if (sched_->getFirst() != NULL) {
+        if (sched_->getFirst() != nullptr) {
             recharging_ready();
             kernel->onArrival(this);
         }
         else {
             recharging_idle();
-            currExe_ = NULL;
-            sched_->notify(NULL);
+            currExe_ = nullptr;
+            sched_->notify(nullptr);
         }
     }
 
     void Server::newRun()
     {
-	arr = 0;
-	last_arr=0;
-	status = IDLE;
-	dline = 0;
-	abs_dline = 0;
-	last_exec_time = 0;
-	_bandExEvt.drop();
+        arr = 0;
+        last_arr=0;
+        status = IDLE;
+        dline = 0;
+        abs_dline = 0;
+        last_exec_time = 0;
+        _bandExEvt.drop();
         _dlineMissEvt.drop();
         _rechargingEvt.drop();
 
         _schedEvt.drop();
         _deschedEvt.drop();
         _dispatchEvt.drop();
-	currExe_ = NULL;
+        currExe_ = nullptr;
 
     }
 
@@ -284,15 +275,15 @@ namespace RTSim {
         DBGPRINT_2("currExe_: ", taskname(currExe_));
         
         if (newExe != currExe_) {
-            if (currExe_ != NULL) currExe_->deschedule();
+            if (currExe_ != nullptr) currExe_->deschedule();
             currExe_ = newExe;
-            if (currExe_ != NULL) currExe_->schedule();
+            if (currExe_ != nullptr) currExe_->schedule();
         }
 
         DBGPRINT_2("Now Running: ", taskname(newExe));
 
-        if (currExe_ == NULL) {
-            sched_->notify(NULL);
+        if (currExe_ == nullptr) {
+            sched_->notify(nullptr);
             executing_releasing();
             kernel->suspend(this);
             kernel->dispatch();

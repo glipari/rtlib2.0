@@ -29,24 +29,22 @@ namespace RTSim {
     /** 
         This namespace should never be used by the user. Contains
         functions to initialize the abstract factory that builds
-        instructions @see Task::insertCode()
+        the scheduler.
     */ 
     namespace __sched_stub
     {
         static registerInFactory<Scheduler, FIFOScheduler, string>
         registerfifo(FIFOName);
-                
+        
         static registerInFactory<Scheduler, FPScheduler, string>
         registerfp(FPName);
-
+        
         static registerInFactory<Scheduler, EDFScheduler, string>
         registeredf(EDFName);
-
+        
         static registerInFactory<Scheduler, RRScheduler, string>
         registerrr(RRName);
     }
-
     void __regsched_init() {}
-
 } // namespace RTSim
 

@@ -1,7 +1,7 @@
 #include <kernel.hpp>
 #include <edfsched.hpp>
 #include <fifosched.hpp>
-#include <jtrace.hpp>
+//#include <jtrace.hpp>
 #include <texttrace.hpp>
 #include <rttask.hpp>
 #include <cbserver.hpp>
@@ -14,7 +14,7 @@ int main()
 {
     try {
 
-        JavaTrace jtrace("trace.trc");
+//        JavaTrace jtrace("trace.trc");
         TextTrace ttrace("trace.txt");
   
         // create the scheduler and the kernel
@@ -37,26 +37,26 @@ int main()
         t12.insertCode("fixed(4);");
         t12.setAbort(false);	
  
-        t11.setTrace(&jtrace);
-        t12.setTrace(&jtrace);
-        t2.setTrace(&jtrace);
-        t3.setTrace(&jtrace);
+        // t11.setTrace(&jtrace);
+        // t12.setTrace(&jtrace);
+        // t2.setTrace(&jtrace);
+        // t3.setTrace(&jtrace);
 
-        ttrace.attachToTask(&t11);
-        ttrace.attachToTask(&t12);
-        ttrace.attachToTask(&t2);
-        ttrace.attachToTask(&t3);
+        ttrace.attachToTask(t11);
+        ttrace.attachToTask(t12);
+        ttrace.attachToTask(t2);
+        ttrace.attachToTask(t3);
           
-	CBServer serv(4, 15,15,'hard',  "server1", "FIFOSched");//"RRSched(2);");
-	serv.addTask(t11);
+        CBServer serv(4, 15, 15, "hard",  "server1", "FIFOSched");//"RRSched(2);");
+        serv.addTask(t11);
         serv.addTask(t12);
         kern.addTask(serv, "");	
-	
+        
 	// kern.addTask(t12, "");
 	// kern.addTask(t11, "");
-	kern.addTask(t2, "");
+        kern.addTask(t2, "");
         kern.addTask(t3, "");
-
+        
         // run the simulation for 500 units of time
         SIMUL.dbg.enable(_TASK_DBG_LEV);
         SIMUL.dbg.enable(_KERNEL_DBG_LEV);

@@ -29,7 +29,6 @@
 
 namespace RTSim {
 
-    //using namespace std;
     using namespace MetaSim;
 
     class CPU;
@@ -105,14 +104,14 @@ namespace RTSim {
         GEvent<Server> _deschedEvt;
         GEvent<Server> _dispatchEvt;
 
-        Scheduler *sched_;
+        std::unique_ptr<Scheduler> sched_;
                 
         AbsRTTask *currExe_;
                 
         /** Sets the current relative deadline (if any)*/
         inline void setDeadline(Tick d) { dline = d; }
 
-        inline void setAbsDead(Tick d) {abs_dline = d;}
+        inline void setAbsDead(Tick d) { abs_dline = d; }
 
         /// from idle to active contending (new work to do)
         virtual void idle_ready() = 0;
@@ -183,7 +182,7 @@ namespace RTSim {
 
         /**
            Return the server virtual time.
-         */
+        */
         virtual double getVirtualTime() = 0;
 
         /**
@@ -305,7 +304,7 @@ namespace RTSim {
         */
         virtual void onEnd(AbsRTTask *t);
 
-	virtual void onDispatch(Event *);
+        virtual void onDispatch(Event *);
 
         /** 
             This function is invoked every time the server
@@ -373,9 +372,7 @@ namespace RTSim {
 
         virtual int getTaskNumber() const { return getID();}
 
-	virtual bool isContextSwitching() const { return false; }
-
-//	virtual std::vector<std::string> getRunningTasks() = 0;
+        virtual bool isContextSwitching() const { return false; }
     };
 } // namespace RTSim
 

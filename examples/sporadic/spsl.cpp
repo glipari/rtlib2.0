@@ -1,6 +1,6 @@
 #include <kernel.hpp>
 #include <rmsched.hpp>
-#include <jtrace.hpp>
+//#include <jtrace.hpp>
 #include <texttrace.hpp>
 #include <rttask.hpp>
 #include <sporadicserver.hpp>
@@ -11,7 +11,6 @@ using namespace RTSim;
 int main()
 {
     try {
-        JavaTrace jtrace("trace.trc");
         TextTrace ttrace("trace.txt");
   
         // create the scheduler and the kernel
@@ -22,10 +21,6 @@ int main()
         t11.insertCode("fixed(1);");
         t11.setAbort(false);
 
-//         PeriodicTask t12(30, 30, 0, "TaskA2");
-//         t12.insertCode("fixed(4);");
-//         t12.setAbort(false);
-
         PeriodicTask t2(45, 45, 0, "TaskB"); 
         t2.insertCode("fixed(6);");
         t2.setAbort(false);
@@ -34,23 +29,26 @@ int main()
         t3.insertCode("fixed(10);");
         t3.setAbort(false);
 	
-        t11.setTrace(&jtrace);
-//         t12.setTrace(&jtrace);
-        t2.setTrace(&jtrace);
-        t3.setTrace(&jtrace);
+        ttrace.attachToTask(t11);
+        ttrace.attachToTask(t2);
+        ttrace.attachToTask(t3);
 
-        ttrace.attachToTask(&t11);
-//         ttrace.attachToTask(&t12);
-        ttrace.attachToTask(&t2);
-        ttrace.attachToTask(&t3);
+        cout << "Task created" << endl;
 
         SporadicServer serv(6, 50, "server", "FIFOSched");
+
+        cout << "Server created" << endl;
+        
         serv.addTask(t11);
         kern.addTask(serv, "");
+
+        cout << "Server added " << endl;
         
         kern.addTask(t2, "");
         kern.addTask(t3, "");
 
+        cout << "Tasks added " << endl;
+        
         // run the simulation for 500 units of time
         SIMUL.dbg.enable(_TASK_DBG_LEV);
         SIMUL.dbg.enable(_KERNEL_DBG_LEV);

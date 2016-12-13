@@ -34,10 +34,10 @@ namespace RTSim {
         addTask(dynamic_cast<AbsRTTask *>(task));
     }
 
-    FIFOScheduler * FIFOScheduler::createInstance(vector<string> &par)
+    unique_ptr<FIFOScheduler> FIFOScheduler::createInstance(const vector<string> &par)
     {
         // todo: check the parameters (i.e. to set the default
         // time quantum)
-        return new FIFOScheduler;
+        return unique_ptr<FIFOScheduler>(new FIFOScheduler);
     }
 }

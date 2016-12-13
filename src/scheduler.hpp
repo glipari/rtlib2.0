@@ -51,7 +51,7 @@ namespace RTSim {
         bool active;
         int _insertTime;
 
-	int _threshold;
+        int _threshold;
 
     public:
         TaskModel(AbsRTTask *t);
@@ -76,15 +76,15 @@ namespace RTSim {
          */
         virtual void changePriority(Tick p) = 0;
 
-	/**
+        /**
          * Returns the preemption threshold of the task t
-	 */
-	int getThreshold(){ return _threshold; }
+         */
+        int getThreshold(){ return _threshold; }
 
-	/**
+        /**
          * Sets the preemption threshold of the task t.
-	 */
-	void setThreshold(const int th){ _threshold = th; }
+         */
+        void setThreshold(const int th){ _threshold = th; }
 
         /**
          * Set the active flag of the task. It happens when
@@ -200,20 +200,20 @@ namespace RTSim {
         void changePriority(AbsRTTask* task, const std::string &params) 
             throw(RTSchedExc);
 
-	/**
-	 * Manages the request of a task to raise his own 
-	 * preemption threshold
-	 */
-	virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
+        /**
+         * Manages the request of a task to raise his own 
+         * preemption threshold
+         */
+        virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
         virtual int enableThreshold(AbsRTTask* t) throw(RTSchedExc);
 
         virtual void disableThreshold(AbsRTTask* t) throw(RTSchedExc);
 
-	/**
+        /**
          * Returns the preemption threshold of task t. Throws an exception
          * if the task does not exist
          */
-	virtual int getThreshold(AbsRTTask *t) throw(RTSchedExc);
+        virtual int getThreshold(AbsRTTask *t) throw(RTSchedExc);
 
 
         /**
@@ -261,13 +261,13 @@ namespace RTSim {
         priority_list<TaskModel*, TaskModel::TaskModelCmp> _queue;
 
         /// map between tasks and models
-        map<AbsRTTask*, TaskModel*> _tasks;
+        std::map<AbsRTTask*, TaskModel*> _tasks;
         
         /// current executing task
-	AbsRTTask* _currExe;
+        AbsRTTask* _currExe;
 
         // stores the old task priorities
-        map<AbsRTTask *, int> oldPriorities;
+        std::map<AbsRTTask *, int> oldPriorities;
 
         /**
            This is the internal version of the addTask, it
@@ -284,9 +284,7 @@ namespace RTSim {
     
         /// @todo change it into ResManager
         friend class PIRManager;
-    };
-
-    
+    };    
 } // namespace RTSim 
 
 #endif

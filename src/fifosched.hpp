@@ -48,7 +48,7 @@ namespace RTSim {
 
         void removeTask(AbsRTTask *t) {}
 
-        static FIFOScheduler *createInstance(vector<string> &par);
+        static std::unique_ptr<FIFOScheduler> createInstance(const std::vector<std::string> &par);
     };
 
 

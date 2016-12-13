@@ -1,7 +1,7 @@
 #include <kernel.hpp>
 #include <rmsched.hpp>
 #include <rrsched.hpp>
-#include <jtrace.hpp>
+//#include <jtrace.hpp>
 #include <texttrace.hpp>
 #include <rttask.hpp>
 #include <sporadicserver.hpp>
@@ -13,7 +13,7 @@ int main()
 {
     try {
 
-        JavaTrace jtrace("trace.trc");
+//        JavaTrace jtrace("trace.trc");
         TextTrace ttrace("trace.txt");
   
         // create the scheduler and the kernel
@@ -39,15 +39,15 @@ int main()
         PeriodicTask a2(1000, 1000, 16, "Aper2");
         a2.insertCode("fixed(2);");
 	
-        t1.setTrace(&jtrace);
-        t2.setTrace(&jtrace);
-        a1.setTrace(&jtrace);
-        a2.setTrace(&jtrace);
+        // t1.setTrace(&jtrace);
+        // t2.setTrace(&jtrace);
+        // a1.setTrace(&jtrace);
+        // a2.setTrace(&jtrace);
 
-        ttrace.attachToTask(&t1);
-        ttrace.attachToTask(&t2);
-        ttrace.attachToTask(&a1);
-        ttrace.attachToTask(&a2);
+        ttrace.attachToTask(t1);
+        ttrace.attachToTask(t2);
+        ttrace.attachToTask(a1);
+        ttrace.attachToTask(a2);
 
         SporadicServer serv(5, 20, "server", "FIFOSched");//"RRSched(2);");
         serv.addTask(a1);
