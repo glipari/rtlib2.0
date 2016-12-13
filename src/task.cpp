@@ -590,17 +590,19 @@ namespace RTSim {
     
     Task* Task::createInstance(vector<string> &par)
     {
-        RandomVar* i = NULL;
-        if (strcmp(par[0].c_str(), "0")) i = parsevar(par[0]);
+        unique_ptr<RandomVar> i;
+        if (strcmp(par[0].c_str(), "0"))
+            i = RandomVar::parsevar(par[0]);
         Tick d = Tick(par[1]);
         Tick p = Tick(par[2]);
-        const char* n = "";
-        if (par.size() > 2) n = par[3].c_str();
+        string n = "";
+        //const char* n = "";
+        if (par.size() > 2) n = par[3];
         long q = 1000;
-        if (par.size() > 4) q = 1000;//atoi(par[4].c_str());
+        if (par.size() > 4) q = 1000;//atoi(par[4].c_str()); // TODO: WHY?
         bool a = true;
-        if (par.size() > 5 && !strcmp(par[5].c_str(), "false")) a = false;
-        Task* t = new Task(i, d, p, n, q, a);
+        if (par.size() > 5 && par[5] != "false") a = false;
+        Task* t = new Task(i.release(), d, p, n, q, a);
         return t;
     }
     

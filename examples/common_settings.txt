@@ -18,7 +18,7 @@ if(APPLE)
 elseif(UNIX)
 	set(LIB_TYPE "SHARED")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
-	set(metasim_LIBRARY "${metasim_DIR}/libmetasim.so")
+	set(metasim_LIBRARY "${metasim_DIR}/build/src/libmetasim.so")
 	
 elseif(WIN32)
 	set(LIB_TYPE "STATIC")

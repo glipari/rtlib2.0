@@ -8,6 +8,8 @@ find_package(metasim REQUIRED)
 set(metasim_DIR "${PROJECT_SOURCE_DIR}/../metasim2.0")
 set(metasim_INCLUDE_DIRS "${metasim_DIR}/src")
 
+# include_directories(${metasim_INCLUDE_DIRS})
+
 # Include dirs.
 add_subdirectory (src)
 add_subdirectory (examples)

@@ -55,13 +55,13 @@ int main()
         cout << "Setting up traces" << endl;
 	
         // new way
-        ttrace.attachToTask(&t1);
-        ttrace.attachToTask(&t2);
-        ttrace.attachToTask(&t3);
+        ttrace.attachToTask(t1);
+        ttrace.attachToTask(t2);
+        ttrace.attachToTask(t3);
 
-        jtrace.attachToTask(&t1);
-        jtrace.attachToTask(&t2);
-        jtrace.attachToTask(&t3);
+        jtrace.attachToTask(t1);
+        jtrace.attachToTask(t2);
+        jtrace.attachToTask(t3);
 
         cout << "Adding tasks to schedulers" << endl;
 
