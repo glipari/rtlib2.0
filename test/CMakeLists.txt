@@ -1,37 +1,22 @@
-# Include dirs.
-include_directories(.)
-include_directories(../src)
+# Add include directories
+include_directories (.)
+include_directories (../src)
 include_directories(${metasim_INCLUDE_DIRS})
 
-# Environment-based settings.
-if(APPLE)
-	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
-	
-	if(EXISTS "${metasim_DIR}/libmetasim.dylib")
-		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/libmetasim.dylib")
-	elseif(EXISTS "${metasim_DIR}/Debug/libmetasim.dylib")
-		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/Debug/libmetasim.dylib")
-	elseif(EXISTS "${metasim_DIR}/Release/libmetasim.dylib")
-		set(metasim_LIBRARY ${CMAKE_LIBRARY_PATH} "${metasim_DIR}/Release/libmetasim.dylib")
-	endif()
-	
-elseif(UNIX)
-	set(LIB_TYPE "SHARED")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++0x")
-	set(metasim_LIBRARY "${metasim_DIR}/libmetasim.so")
-	
-elseif(WIN32)	
-	if(EXISTS "${metasim_DIR}/Debug/metasim.lib")
-		set(metasim_LIBRARY "${metasim_DIR}/Debug/metasim.lib")
-	elseif(EXISTS "${metasim_DIR}/Release/metasim.lib")
-		set(metasim_LIBRARY "${metasim_DIR}/Release/metasim.lib")
-	endif()
-		
-endif()
+set (RTLIB_TEST_LIBRARY ${PROJECT_NAME}_test)
 
-# Create the executable.
-add_executable(tests test_main.cpp cbs.cpp test_task.cpp test_mrt.cpp test_AVR.cpp)
+# Create Catch library to decrease compile times
+add_library (${RTLIB_TEST_LIBRARY} ${LIBRARY_TYPE} TestMain.cpp)
 
-# Indicate that rtlib need rtlib library.
-target_link_libraries(tests rtlib ${metasim_LIBRARY})
+# Define a macro to simplify tests creation
+macro (create_test name src)
+    add_executable (${name} ${src})
+    target_compile_features (${name} PRIVATE cxx_range_for)
+    target_link_libraries (${name} ${RTLIB_TEST_LIBRARY} ${PROJECT_NAME} ${metasim_LIBRARIES})
+    add_test (NAME ${name} COMMAND ${name})
+endmacro (create_test)
+
+create_test (TestCBS cbs.cpp)
+create_test (TestTask test_task.cpp)
+create_test (TestMRT test_mrt.cpp)
+create_test (TestAVR test_AVR.cpp)
