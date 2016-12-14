@@ -17,14 +17,15 @@ namespace RTSim {
         Tick i = Tick(par[0]);
         Tick d = Tick(par[1]);
         Tick p = Tick(par[2]);
-        const char* n = "";
-        if (par.size() > 2) n = par[3].c_str();
+        //const char* n = "";
+        string n;
+        if (par.size() > 2) n = par[3];
         long q = 100;
-        if (par.size() > 4) q = atoi(par[4].c_str());
+        if (par.size() > 4) q = stoi(par[4]);
         
         // @todo what is a? 
         bool a = true;
-        if (par.size() > 5 && !strcmp(par[5].c_str(), "false")) a = false;
+        if (par.size() > 5 && par[5] == "false") a = false; //!strcmp(par[5].c_str(), "false")) a = false;
 
         unique_ptr<PeriodicTask> tt(new PeriodicTask(i, d, p, n, q));
         

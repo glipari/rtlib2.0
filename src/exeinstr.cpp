@@ -42,7 +42,8 @@ namespace RTSim {
         Instr *temp = 0;
 
         Task *task = dynamic_cast<Task *>(Entity::_find(par[1]));
-        if (isdigit((par[0].c_str())[0])) {
+        //if (isdigit((par[0].c_str())[0])) {
+        if (isdigit(par[0][0])) {
             temp = new FixedInstr(task, atoi(par[0].c_str()));
         }
         else {
@@ -50,7 +51,7 @@ namespace RTSim {
             string p = get_param(par[0]);
             vector<string> parms = split_param(p);
 
-            unique_ptr<RandomVar> var(genericFactory<RandomVar>::instance().create(token,parms));
+            unique_ptr<RandomVar> var(FACT(RandomVar).create(token,parms));
     
             if (var.get() == 0) throw ParseExc("ExecInstr", par[0]);
 
@@ -215,11 +216,6 @@ namespace RTSim {
     unique_ptr<Instr> FixedInstr::createInstance(const vector<string> &par)
     {
         Task *task = dynamic_cast<Task *>(Entity::_find(par[1]));
-        return unique_ptr<FixedInstr>(new FixedInstr(task, atoi(par[0].c_str())));
+        return unique_ptr<FixedInstr>(new FixedInstr(task, stoi(par[0])));
     }
-
-
-
-
-    
 }

@@ -578,7 +578,7 @@ namespace RTSim {
     unique_ptr<Task> Task::createInstance(const vector<string> &par)
     {
         unique_ptr<RandomVar> i;
-        if (strcmp(par[0].c_str(), "0"))
+        if (par[0] != "0") //(strcmp(par[0].c_str(), "0"))
             i = RandomVar::parsevar(par[0]);
         Tick d = Tick(par[1]);
         Tick p = Tick(par[2]);

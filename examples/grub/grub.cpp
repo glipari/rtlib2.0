@@ -12,7 +12,6 @@ using namespace RTSim;
 int main()
 {
     try {
-
         JavaTrace jtrace("trace.trc");
         TextTrace ttrace("trace.txt");
   
@@ -28,25 +27,25 @@ int main()
         t3.insertCode("fixed(4);");
         t3.setAbort(false);
 
-        ttrace.attachToTask(&t2);
-        ttrace.attachToTask(&t3);
+        ttrace.attachToTask(t2);
+        ttrace.attachToTask(t3);
 
 
-	Grub serv1(2, 4, "HIGH", "FIFOSched");
-	serv1.addTask(t2);
+        Grub serv1(2, 4, "HIGH", "FIFOSched");
+        serv1.addTask(t2);
         kern.addTask(serv1, "");	
 	
-	Grub serv2(3, 6, "LOW", "FIFOSched");
-	serv2.addTask(t3);
+        Grub serv2(3, 6, "LOW", "FIFOSched");
+        serv2.addTask(t3);
         kern.addTask(serv2, "");
 
-	GrubSupervisor super;
+        GrubSupervisor super;
 
-	bool flag1 = super.addGrub(&serv1);
-	cout << "Server1 added = " << flag1 << endl;
+        bool flag1 = super.addGrub(&serv1);
+        cout << "Server1 added = " << flag1 << endl;
 
-	bool flag2 = super.addGrub(&serv2);
-	cout << "Server2 added = " << flag2 << endl;
+        bool flag2 = super.addGrub(&serv2);
+        cout << "Server2 added = " << flag2 << endl;
 
         SIMUL.dbg.enable(_TASK_DBG_LEV);
         SIMUL.dbg.enable(_KERNEL_DBG_LEV);
