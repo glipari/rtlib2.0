@@ -59,7 +59,10 @@ namespace RTSim {
     class ThreInstr : public Instr {
         EndInstrEvt _endEvt; 
         ThreEvt _threEvt;
-        string _th;
+        std::string _th;
+
+        ThreInstr(const ThreInstr &other);
+        
     public:
         /**
          //      This is the constructor of the ThreInstr.
@@ -70,20 +73,21 @@ namespace RTSim {
          //      @param nr is the number of resources being taken
          //      @param n is the instruction name
          */
+
         ThreInstr(Task * f, const std::string& th, const std::string &n = "");
+
+        CLONEABLE(Instr, ThreInstr)
 
         static std::unique_ptr<ThreInstr> createInstance(const std::vector<std::string> &par);
 
         ///Virtual methods from Instr
         virtual void schedule();
         virtual void deschedule();
-        virtual Tick getExecTime() const { return 0;};
-        virtual Tick getDuration() const { return 0;};
+        virtual Tick getExecTime() const { return 0; }
+        virtual Tick getDuration() const { return 0; }
         virtual Tick getWCET() const throw(RandomVar::MaxException) { return 0; }
         virtual void reset() {}
         
-        //virtual void setTrace(Trace *);
-
         template <class TraceClass>
         void setTrace(TraceClass &trace_obj) {
             attach_stat(trace_obj, _endEvt);
@@ -91,10 +95,11 @@ namespace RTSim {
         }
         
         virtual void onEnd();
-        virtual void newRun() {};
+        virtual void newRun() {}
         virtual void endRun();
 
-
+        std::string getThres() const { return _th; }                
+        
         /** Function inherited from clss Instr.It refreshes the state 
          *  of the executing instruction when a change of the CPU speed occurs. 
          */ 

@@ -69,7 +69,10 @@ namespace RTSim {
         /// Last instant of time this instruction was scheduled
         Tick lastTime;     
         /// True if the instruction is currently executing
-        bool executing;    
+        bool executing;
+
+        // copy constructor
+        ExecInstr(const ExecInstr &obj);
     public:
 
         EndInstrEvt _endEvt;
@@ -81,7 +84,9 @@ namespace RTSim {
         ExecInstr(Task *f, unique_ptr<RandomVar> c, const std::string &n = "");
         static Instr *createInstance(const std::vector<std::string> &par);
 
-        virtual ~ExecInstr() {}
+        CLONEABLE(Instr, ExecInstr)
+        
+        virtual ~ExecInstr(); 
 
         //Virtual methods from Instr
         virtual void schedule() throw (InstrExc);

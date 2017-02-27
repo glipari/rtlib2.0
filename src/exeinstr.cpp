@@ -32,10 +32,38 @@ namespace RTSim {
     using namespace parse_util;
 
     ExecInstr::ExecInstr(Task *f, unique_ptr<RandomVar> c, const string &n) : 
-        Instr(f, n), cost(std::move(c)), _endEvt(this) 
+        Instr(f, n), flag(false),
+        cost(std::move(c)),
+        execdTime(0),
+        currentCost(0),
+        actTime(0),
+        lastTime(0),
+        executing(false),
+        _endEvt(this) 
     {
-        DBGTAG(_INSTR_DBG_LEV,"ExecInstr");
+        DBGTAG(_INSTR_DBG_LEV,"ExecInstr constructor");
     }
+
+    
+    ExecInstr::ExecInstr(const ExecInstr &other) : 
+        Instr(other), flag(false),
+        cost(other.cost->clone()),
+        execdTime(0),
+        currentCost(0),
+        actTime(0),
+        lastTime(0),
+        executing(false),
+        _endEvt(this)
+    {
+        DBGTAG(_INSTR_DBG_LEV,"ExecInstr copy constructor");
+    }
+
+    
+    ExecInstr::~ExecInstr()
+    {
+        cout << "ExecInstr::~ExecInstr() called" << endl;
+    }    
+    
 
     Instr *ExecInstr::createInstance(const vector<string> &par)
     {

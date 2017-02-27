@@ -26,6 +26,10 @@ namespace RTSim {
           _waitEvt(f, this), _numberOfRes(nr) 
     {}
 
+    WaitInstr::WaitInstr(const WaitInstr &other)
+        : Instr(other), _res(other.getResource()), _endEvt(this), _waitEvt(other.getTask(), this), _numberOfRes(other.getNumOfResources())
+    {}
+
     unique_ptr<WaitInstr> WaitInstr::createInstance(vector<string> &par)
     {
         unique_ptr<WaitInstr> ptr(new WaitInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]));
@@ -78,6 +82,12 @@ namespace RTSim {
           _signalEvt(f, this), _numberOfRes(nr) 
     {}
 
+    SignalInstr::SignalInstr(const SignalInstr &other)
+        : Instr(other), _res(other.getResource()), _endEvt(this), 
+          _signalEvt(other.getTask(), this), _numberOfRes(other.getNumOfResources()) 
+    {}
+
+    
     unique_ptr<SignalInstr> SignalInstr::createInstance(vector<string> &par)
     {
         unique_ptr<SignalInstr> ptr(new SignalInstr(dynamic_cast<Task *>(Entity::_find(par[1])), par[0]));

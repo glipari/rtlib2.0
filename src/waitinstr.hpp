@@ -63,6 +63,9 @@ namespace RTSim {
         EndInstrEvt _endEvt; 
         WaitEvt _waitEvt;
         int _numberOfRes;
+
+        WaitInstr(const WaitInstr &wi);
+
     public:
         /**
            This is the constructor of the WaitInstr.
@@ -75,6 +78,8 @@ namespace RTSim {
         */
         WaitInstr(Task * f, const std::string &r, int nr=1, const std::string &n= "");
 
+        CLONEABLE(Instr, WaitInstr)
+        
         static std::unique_ptr<WaitInstr> createInstance(std::vector<std::string> &par);
 
         ///Virtual methods from Instr
@@ -83,7 +88,8 @@ namespace RTSim {
         virtual Tick getExecTime() const { return 0; }
         virtual Tick getDuration() const { return 0; }
         virtual Tick getWCET() const throw(RandomVar::MaxException) { return 0; }
-        string getResource() const { return _res; }
+        std::string getResource() const { return _res; }
+        int getNumOfResources() const { return _numberOfRes; }
         virtual void reset() {}
         
         template <class TraceClass>
@@ -118,6 +124,9 @@ namespace RTSim {
         SignalEvt _signalEvt;
  
         int _numberOfRes;
+
+        SignalInstr(const SignalInstr &other);
+
     public:
         /**
            This is the constructor of the SignalInstr
@@ -130,6 +139,8 @@ namespace RTSim {
         */
         SignalInstr(Task *f, const std::string &r, int nr=1, const std::string & n= "");
 
+        CLONEABLE(Instr, SignalInstr)
+        
         static std::unique_ptr<SignalInstr> createInstance(std::vector<std::string> &par);
 
         ///Virtual methods from Instr
@@ -148,6 +159,7 @@ namespace RTSim {
         }
 
         string getResource() const { return _res; }
+        int getNumOfResources() const { return _numberOfRes; }
         virtual void onEnd();
         virtual void newRun() {};
         virtual void endRun();

@@ -14,47 +14,52 @@ namespace RTSim {
 	using namespace MetaSim;
 	using namespace RTSim;
 
-	AVRTask::~AVRTask(){
-		if (myInstr.size() > 0){
-			vector<vector<Instr*>>::iterator s = myInstr.begin();
-			while (s != myInstr.end()){
-				vector < Instr* > ::iterator j = (*s).begin();
-				while (j != (*s).end()){
-					delete (*j);
-					j++;
-				}
-				s++;
-			}
-		}
+	AVRTask::~AVRTask() {
+        //std::cout << "Inside delete" << endl;
+
+        /// PEZZO DI CODICE INCRIMINATO 
+
+		// if (myInstr.size() > 0){
+		// 	auto s = myInstr.begin();
+		// 	while (s != myInstr.end()){
+		// 		auto j = s->begin();
+		// 		while (j != s->end()) {
+		// 			delete (*j);
+		// 			j++;
+		// 		}
+		// 		s++;
+		// 	}
+		// }
+
 		myInstr.clear();
-		instrQueue.clear();
 		BufferedDeadlines.clear();
 		BufferedModes.clear();
+        //std::cout << "delete completed" << endl;
 	}
 
-	void AVRTask::buildInstr(const vector<string>& param) throw (ParseExc){
-		
-		if (myInstr.size() > 0){
-			vector<vector<Instr*>>::iterator s = myInstr.begin();
-			while (s != myInstr.end()){
-				vector < Instr* > ::iterator j = (*s).begin();
-				while (j != (*s).end()){
-					delete (*j);
-					j++;
-				}
-				s++;
-			}
-		}
+    
+	void AVRTask::buildInstr(const vector<string>& param) throw (ParseExc) {
+
+        /// PEZZO DI CODICE INCRIMINATO 
+ 		// if (myInstr.size() > 0){
+		// 	vector<vector<Instr*>>::iterator s = myInstr.begin();
+		// 	while (s != myInstr.end()){
+		// 		vector < Instr* > ::iterator j = (*s).begin();
+		// 		while (j != (*s).end()){
+		// 			delete (*j);
+		// 			j++;
+		// 		}
+		// 		s++;
+		// 	}
+		// }
 
 		myInstr.clear();
 
-		for (unsigned int k = 0; k < param.size(); k++){
-
+		for (unsigned int k = 0; k < param.size(); k++) {
 			vector<string> instrAtMode = split_instr(param.at(k));
 			vector<RTSim::Instr*> myCurrInstr;
 
 			for (unsigned int i = 0; i < instrAtMode.size(); ++i) {			
-
 				string token = get_token(instrAtMode[i]);
 				string param = get_param(instrAtMode[i]);
 
@@ -62,19 +67,20 @@ namespace RTSim {
 
 				par_list.push_back(string(getName()));
 
-
 				unique_ptr<RTSim::Instr> curr = genericFactory<RTSim::Instr>::instance().create(token, par_list);
 
-				//RTSim::Instr* curr_instr = curr.release();
-				
 				if (!curr)
 					throw ParseExc("insertCode", token);
 
-				myCurrInstr.push_back(curr.release());
+				RTSim::Instr* curr_instr = curr.release();
+				myCurrInstr.push_back(curr_instr);
 			}
 
-			this->myInstr.push_back(myCurrInstr);
+			myInstr.push_back(myCurrInstr);
 		}
+
+        //std::cout << "Creation terminated" << endl;
+        
 	}
 
 	AVRTask::AVRTask(double angPeriod, double angPhase, double angDl, 
@@ -86,8 +92,10 @@ namespace RTSim {
 	{
 		if (instr.size() != Omegaminus.size() || instr.size() != Omegaplus.size())
 			throw WrongParameterSize("instruction, OmegaPlus and OmegaMinus sizes must be all equal to the max mode number");
+        
 		buildInstr(instr);
-		OmegaPlus.assign(Omegaplus.begin(),Omegaplus.end());
+        
+		OmegaPlus.assign(Omegaplus.begin(), Omegaplus.end());
 		OmegaMinus.assign(Omegaminus.begin(), Omegaminus.end());
 		std::transform(OmegaPlus.begin(), OmegaPlus.end(), OmegaPlus.begin(), std::bind1st(std::multiplies<double>(), 2 * M_PI / 60));
 		std::transform(OmegaMinus.begin(), OmegaMinus.end(), OmegaMinus.begin(), std::bind1st(std::multiplies<double>(), 2 * M_PI / 60));
@@ -110,7 +118,7 @@ namespace RTSim {
 	}
 
 	//not to be called when task is active
-	//only when a job is finished and before activate the next one
+	//only when a job is finished and before activating the next one
 	void AVRTask::changeStatus(double angper, double angphase, double angdl,
                                const vector<string>& instr,
                                const vector<double>& OmegaM,
@@ -119,10 +127,13 @@ namespace RTSim {
 			throw WrongParameterSize("instruction, OmegaPlus and OmegaMinus sizes must be all equal to the max mode number");
 		if (isActive())
 			throw TaskAlreadyActive();
+        
 		AngularPeriod = angper;
 		AngularPhase = angphase;
 		AngularDl = angdl;
+        
 		buildInstr(instr);
+        
 		OmegaPlus.assign(OmegaP.begin(), OmegaP.end());
 		OmegaMinus.assign(OmegaM.begin(), OmegaM.end());
 		std::transform(OmegaPlus.begin(), OmegaPlus.end(), OmegaPlus.begin(), std::bind1st(std::multiplies<double>(), 2 * M_PI / 60));
@@ -137,18 +148,27 @@ namespace RTSim {
 		mode = *(BufferedModes.begin());
 		BufferedModes.erase(BufferedModes.begin());
 
+        //cout << "AVRTask::handleArrival at " << arr << " BEFORE" << endl;
 		instrQueue.clear();
+        //cout << "AVRTask::handleArrival at " << arr << " AFTER" << endl;
+
+        //if (instrQueue.begin() != instrQueue.end()) cout << "SOMETHING REALLY WRONG" << endl;
 
 		vector<RTSim::Instr*> myCurrInstr = myInstr.at(mode);
+
 		vector<RTSim::Instr*>::iterator j = myCurrInstr.begin();
 		while (j != myCurrInstr.end()) {
+            /// PEZZO INCRIMINATO: bisogna prima clonare l'oggetto, e poi darlo in pasto allo unique_ptr
 			addInstr(unique_ptr<Instr>(*j));
 			j++;
 		}
-	
-		Task::handleArrival(arr);
 
-	}
+        //cout << "AVRTask::handleArrival at " << arr << " before TASK::handleArrival" << endl;
+        
+		Task::handleArrival(arr);
+        
+        //cout << "AVRTask::handleArrival at " << arr << " after TASK::handleArrival" << endl;
+    }
 
 	void AVRTask::activate(int mode, Tick rdl) throw (ModeOutOfIndex)
 	{
@@ -179,7 +199,6 @@ namespace RTSim {
 
 
 	unique_ptr<AVRTask> AVRTask::createInstance(const vector<string>& par){
-
 		double angPer = atof(par[0].c_str());
 		double angPhase = atof(par[1].c_str());
 		double angDl = atof(par[2].c_str());

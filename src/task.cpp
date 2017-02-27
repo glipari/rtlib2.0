@@ -33,7 +33,7 @@ namespace RTSim {
     {
         DBGENTER(_TASK_DBG_LEV);
         DBGPRINT("Destructor of class Task");
-        discardInstrs(true);        
+        //discardInstrs(true);
     }
     
     Task::Task(unique_ptr<RandomVar> iat, Tick rdl, Tick ph,
@@ -147,16 +147,25 @@ namespace RTSim {
             DBGPRINT("Task::handleArrival() Task already active!");
             throw TaskAlreadyActive();
         }
+        
         arrival = arr;
         execdTime = 0;
         actInstr = instrQueue.begin();
-        
+
+        cout << "Task::handleArrival() instrQueue.begin() accessed " << endl;
+                
         // reset all instructions
         auto p = instrQueue.begin();
         while (p != instrQueue.end()) {
+            cout << "Resetting" << endl;
+            if (*p == nullptr) cout << "SERIOUS PROBLEM!!" << endl;
             (*p)->reset();
+            cout << "Reset" << endl;
             p++;
         }
+
+        cout << "Task::handleArrival() after reset " << endl;
+        
         state = TSK_READY;
         _dl = getArrival() + _rdl;
         if (_dl >= SIMUL.getTime()) deadEvt.post(_dl);
@@ -243,16 +252,6 @@ namespace RTSim {
         
     void Task::discardInstrs(bool selfDestruct)
     {
-        // // Unset all the Instructions
-        // if (selfDestruct) {
-        //     auto p = instrQueue.begin();
-            
-        //     while (p != instrQueue.end()) {
-        //         delete *p;
-        //         p++;
-        //     }
-        // }
-        // delete all list entries
         instrQueue.clear();
     }
     

@@ -25,6 +25,12 @@ namespace RTSim {
         : Instr(f, n), _endEvt(this), _threEvt(f, this), _th(th)  
     {}
 
+    ThreInstr::ThreInstr(const ThreInstr &other) 
+        : Instr(other), _endEvt(this), _threEvt(other.getTask(), this), _th(other.getThres())
+    {
+    }
+
+    
     unique_ptr<ThreInstr> ThreInstr::createInstance(const vector<string> &par)
     {
         unique_ptr<ThreInstr> ptr(new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), par[0]));

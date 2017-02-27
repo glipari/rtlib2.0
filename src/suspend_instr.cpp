@@ -15,6 +15,13 @@ namespace RTSim {
     {
     }
 
+    SuspendInstr::SuspendInstr(const SuspendInstr &other) :
+        Instr(other),
+        suspEvt(this, &SuspendInstr::onSuspend),
+        resumeEvt(this, &SuspendInstr::onEnd),
+        delay(other.getDelay())
+    {}
+        
     SuspendInstr * SuspendInstr::createInstance(vector<string> &par)
     {
         if (par.size() != 2) throw parse_util::ParseExc("SuspendInstr::createInstance", "Wrong number of arguments"); 

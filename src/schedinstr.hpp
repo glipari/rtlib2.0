@@ -44,7 +44,7 @@ namespace RTSim {
     public:
         SchedIEvt(Task* t, SchedInstr* in) :TaskEvt(t, _DEFAULT_PRIORITY - 3), ti(in)
             {}
-        SchedInstr *getInstr() {return ti;} 
+        SchedInstr *getInstr() { return ti; } 
         virtual void doit() {}
     };
 
@@ -58,6 +58,10 @@ namespace RTSim {
     class SchedInstr : public Instr {
         EndInstrEvt _endEvt; 
         SchedIEvt _threEvt;
+
+        // Copy constructor
+        SchedInstr(const SchedInstr &si); 
+        
     public:
         /**
          //      This is the constructor of the SchedInstr.
@@ -70,6 +74,8 @@ namespace RTSim {
          */
         SchedInstr(Task * f, const std::string& s, const std::string &n = "");
 
+        CLONEABLE(Instr, SchedInstr)
+       
         static std::unique_ptr<SchedInstr> createInstance(const std::vector<std::string> &par);
 
         ///Virtual methods from Instr

@@ -75,15 +75,24 @@ namespace RTSim {
     class Instr: public Entity {
     protected:
         Task* _father;
+        
+        // copy constructor hidden
+        Instr(const Instr&);
+
     public:
         typedef string BASE_KEY_TYPE;
-        Instr(Task *f, const std::string &n = "") :Entity(n), _father(f) {}
+        Instr(Task *f, const std::string &n = "") : Entity(n), _father(f) {}
         virtual ~Instr() {}
+
+        /**
+           For copying polymorphic instructions
+         */
+        BASE_CLONEABLE(Instr)
 
         /** 
          * Returns a ponter to that task which ownes this instruction.
          */ 
-        Task* getTask() const {return _father;}
+        Task* getTask() const { return _father; }
   
         /** 
          * Called when the instruction is scheduled.
