@@ -226,8 +226,7 @@ namespace RTSim {
            Forwards the request of preemption threshold raising for 
            the executing task to the scheduler.
         */
-
-        virtual void setThreshold(const int th);
+        virtual void setThreshold(int th);
 
         virtual int enableThreshold();
 

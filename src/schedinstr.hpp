@@ -67,10 +67,6 @@ namespace RTSim {
          //      This is the constructor of the SchedInstr.
          //      @param f is a pointer to the task containing the pseudo
          //      instruction
-         //      @param r is the name of the resorce manager handling the
-         //      resource which the task is accessing
-         //      @param nr is the number of resources being taken
-         //      @param n is the instruction name
          */
         SchedInstr(Task * f, const std::string& s, const std::string &n = "");
 
@@ -85,7 +81,6 @@ namespace RTSim {
         virtual Tick getDuration() const { return 0; }
         virtual Tick getWCET() const throw(RandomVar::MaxException) { return 0; }
         virtual void reset() {}
-        //virtual void setTrace(Trace *);
 
         template <class TraceClass>
         void setTrace(TraceClass &trace_obj) {

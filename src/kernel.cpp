@@ -157,7 +157,7 @@ namespace RTSim {
     {
         DBGENTER(_KERNEL_DBG_LEV);
 
-	// we have only to post an Dispatch event (low priority)
+        // we have only to post an Dispatch event (low priority)
 
         beginDispatchEvt.drop();
         beginDispatchEvt.post(SIMUL.getTime());
@@ -242,23 +242,23 @@ namespace RTSim {
 
     void RTKernel::setThreshold(const int th)
     {
-	DBGENTER(_KERNEL_DBG_LEV);
+        DBGENTER(_KERNEL_DBG_LEV);
 
        _sched->setThreshold(_currExe, th);
     }
 
     int RTKernel::enableThreshold()
     {
-	DBGENTER(_KERNEL_DBG_LEV);
+        DBGENTER(_KERNEL_DBG_LEV);
 
         int tmp = _sched->enableThreshold(_currExe);
-	return tmp;
+        return tmp;
     }
 
     void RTKernel::disableThreshold()
     {
-	DBGENTER(_KERNEL_DBG_LEV);
-
+        DBGENTER(_KERNEL_DBG_LEV);
+        
         _sched->disableThreshold(_currExe);
     }
  

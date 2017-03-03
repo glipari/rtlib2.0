@@ -29,8 +29,7 @@ namespace RTSim {
         : Instr(other), _endEvt(this), _threEvt(other.getTask(), this), _th(other.getThres())
     {
     }
-
-    
+   
     unique_ptr<ThreInstr> ThreInstr::createInstance(const vector<string> &par)
     {
         unique_ptr<ThreInstr> ptr(new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), par[0]));
@@ -57,12 +56,6 @@ namespace RTSim {
         DBGTAG(_INSTR_DBG_LEV,"ThreInstr::deschedule()");
         _endEvt.drop();
     }
-
-    // void ThreInstr::setTrace(Trace *t) 
-    // {
-    //     _endEvt.addTrace(t); 
-    //     _threEvt.addTrace(t);
-    // }
 
     void ThreInstr::onEnd() 
     {

@@ -156,7 +156,8 @@ namespace RTSim {
 
         Implements the scheduling policy for a set of tasks. Tipically
         a scheduler contains a queue of task models. The
-        responsibility of this class is to mantain the queue. */
+        responsibility of this class is to mantain the queue. 
+    */
     class Scheduler : public MetaSim::Entity {
     public:
 
@@ -206,7 +207,6 @@ namespace RTSim {
          */
         virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
         virtual int enableThreshold(AbsRTTask* t) throw(RTSchedExc);
-
         virtual void disableThreshold(AbsRTTask* t) throw(RTSchedExc);
 
         /**

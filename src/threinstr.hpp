@@ -44,7 +44,7 @@ namespace RTSim {
     public:
         ThreEvt(Task* t, ThreInstr* in) :TaskEvt(t, _DEFAULT_PRIORITY - 3), ti(in)
             {}
-        ThreInstr *getInstr() {return ti;} 
+        ThreInstr *getInstr() { return ti; } 
         virtual void doit() {}
     };
 
