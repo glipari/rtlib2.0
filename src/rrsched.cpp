@@ -19,7 +19,7 @@ namespace RTSim {
         return false;
     }
     
-    Tick RRScheduler::RRModel::getPriority() 
+    Tick RRScheduler::RRModel::getPriority() const
     {
         return 1;
     }

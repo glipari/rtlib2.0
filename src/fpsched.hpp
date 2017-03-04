@@ -44,7 +44,7 @@ namespace RTSim {
 
         public:
             FPModel(AbsRTTask *t, Tick p) : TaskModel(t), _prio(p) {}
-            Tick getPriority() { return _prio; }
+            Tick getPriority() const { return _prio; }
 
             /// @todo: check the type
             void setPriority(Tick p) {_prio = p; }

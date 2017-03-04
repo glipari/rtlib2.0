@@ -76,9 +76,9 @@ namespace RTSim {
         _tasks[task] = model;
     }
 
-    TaskModel* Scheduler::find(AbsRTTask* task)
+    TaskModel* Scheduler::find(AbsRTTask* task) const
     {
-        map<AbsRTTask*, TaskModel*>::iterator mi = _tasks.find(task);
+        auto mi = _tasks.find(task);
 	
         if (mi == _tasks.end()) 
             return NULL;
@@ -120,7 +120,7 @@ namespace RTSim {
         model->setInactive();
     }
 
-    int Scheduler::getPriority(AbsRTTask* task) throw(RTSchedExc)
+    int Scheduler::getPriority(AbsRTTask* task) const throw(RTSchedExc)
     {
         TaskModel* model = find(task);
 	

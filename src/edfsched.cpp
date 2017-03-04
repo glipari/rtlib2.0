@@ -16,6 +16,22 @@
 
 namespace RTSim {
 
+    EDFModel::EDFModel(AbsRTTask* t) :TaskModel(t), extP(false) {}
+
+    Tick EDFModel::getPriority() const {
+        if (extP) return prio;
+        else return _rtTask->getDeadline(); 
+    }
+
+    void EDFModel::changePriority(Tick p) {
+        if (p == _rtTask->getDeadline()) extP = false;
+        else {
+            extP = true;
+            prio = int(p);
+        }
+    }
+    
+
     void EDFScheduler::addTask(AbsRTTask* task) throw (RTSchedExc)
     {
         enqueueModel(new EDFModel(task));

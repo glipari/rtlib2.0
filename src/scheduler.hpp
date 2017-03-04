@@ -64,7 +64,7 @@ namespace RTSim {
         /**
          * Returns the priority of the task.
          */
-        virtual Tick getPriority() = 0;
+        virtual Tick getPriority() const = 0;
 
         /**
          * Returns the task number;
@@ -196,7 +196,7 @@ namespace RTSim {
          */
         virtual void extract(AbsRTTask *) throw(RTSchedExc, BaseExc);
 
-        int getPriority(AbsRTTask* task) throw(RTSchedExc);
+        int getPriority(AbsRTTask* task) const throw(RTSchedExc);
 
         void changePriority(AbsRTTask* task, const std::string &params) 
             throw(RTSchedExc);
@@ -278,7 +278,7 @@ namespace RTSim {
          * This function returns a TaskModel from a task. It is
          * used mainly inside this class, but it can also be
          * used by some resource manager. */
-        TaskModel* find(AbsRTTask* task);
+        TaskModel* find(AbsRTTask* task) const;
     
         /// @todo change it into ResManager
         friend class PIRManager;
