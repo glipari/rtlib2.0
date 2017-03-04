@@ -18,9 +18,9 @@
 #include <schedinstr.hpp>
 #include <waitinstr.hpp>
 #include <suspend_instr.hpp>
+#include <reginstr.hpp>
 
 namespace RTSim {
-
     const Instr::BASE_KEY_TYPE ExecName("delay");
     const Instr::BASE_KEY_TYPE FixedName("fixed");
 
@@ -30,8 +30,8 @@ namespace RTSim {
     const Instr::BASE_KEY_TYPE SignalName1("signal");
     const Instr::BASE_KEY_TYPE SignalName2("unlock");
 
-    const Instr::BASE_KEY_TYPE ThreName("threshold");
-    const Instr::BASE_KEY_TYPE ScheduleName("schedule");
+    const Instr::BASE_KEY_TYPE ThreName("raise_thres");
+    const Instr::BASE_KEY_TYPE ScheduleName("lower_thres");
 
     const Instr::BASE_KEY_TYPE SuspendName("suspend");
 

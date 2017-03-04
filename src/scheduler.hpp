@@ -77,9 +77,9 @@ namespace RTSim {
         virtual void changePriority(Tick p) = 0;
 
         /**
-         * Returns the preemption threshold of the task t
+         * Returns the preemption threshold
          */
-        int getThreshold(){ return _threshold; }
+        int getThreshold() { return _threshold; }
 
         /**
          * Sets the preemption threshold of the task t.
@@ -202,8 +202,6 @@ namespace RTSim {
             throw(RTSchedExc);
 
         /**
-         * Manages the request of a task to raise his own 
-         * preemption threshold
          */
         virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
         virtual int enableThreshold(AbsRTTask* t) throw(RTSchedExc);

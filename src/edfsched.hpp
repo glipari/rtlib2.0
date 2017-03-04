@@ -33,21 +33,18 @@ namespace RTSim {
 
     public:
         EDFModel(AbsRTTask* t) :TaskModel(t), extP(false) {}
-        Tick getPriority()
-            {
-                if (extP) return prio;
-                else return _rtTask->getDeadline(); 
+        Tick getPriority() {
+            if (extP) return prio;
+            else return _rtTask->getDeadline(); 
+        }
+        void changePriority(Tick p) {
+            if (p == _rtTask->getDeadline()) extP = false;
+            else {
+                extP = true;
+                prio = int(p);
             }
-        void changePriority(Tick p)
-            {
-                if (p == _rtTask->getDeadline()) extP = false;
-                else {
-                    extP = true;
-                    prio = int(p);
-                }
-            }
-
-    };
+        }
+    }
 
 
     /**
