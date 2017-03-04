@@ -8,9 +8,13 @@ set(LIBRARY_TYPE STATIC)
 
 # Import MetaSim
 find_package(metasim REQUIRED)
-set(metasim_DIR "${PROJECT_SOURCE_DIR}/../metasim2.0")
-set(metasim_INCLUDE_DIRS "${metasim_DIR}/src")
-get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_RELEASE)
+set(metasim_INCLUDE_DIRS "${metasim_DIR}/include")
+get_target_property(metasim_CONFIGURATION metasim IMPORTED_CONFIGURATIONS)
+if (${metasim_CONFIGURATION} STREQUAL "RELEASE")
+  get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_RELEASE)
+elseif (${metasim_CONFIGURATION} STREQUAL "DEBUG")
+  get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_DEBUG)
+endif()
 
 # Include dirs
 add_subdirectory (src)
