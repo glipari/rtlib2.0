@@ -9,12 +9,15 @@ set(LIBRARY_TYPE STATIC)
 # Import MetaSim
 find_package(metasim REQUIRED)
 set(metasim_INCLUDE_DIRS "${metasim_DIR}/include")
-get_target_property(metasim_CONFIGURATION metasim IMPORTED_CONFIGURATIONS)
-if (${metasim_CONFIGURATION} STREQUAL "RELEASE")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
   get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_RELEASE)
-elseif (${metasim_CONFIGURATION} STREQUAL "DEBUG")
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_DEBUG)
 endif()
+
+message("Metasim configuration file directory: ${metasim_DIR}")
+message("Metasim include directory: ${metasim_INCLUDE_DIRS}")
+message("Metasim library: ${metasim_LIBRARIES}")
 
 # Include dirs
 add_subdirectory (src)
