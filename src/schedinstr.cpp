@@ -55,12 +55,6 @@ namespace RTSim {
         _endEvt.drop();
     }
 
-    // void SchedInstr::setTrace(Trace *t) 
-    // {
-    //     _endEvt.addTrace(t); 
-    //     _threEvt.addTrace(t);
-    // }
-
     void SchedInstr::onEnd() 
     {
         DBGENTER(_INSTR_DBG_LEV);
@@ -73,9 +67,8 @@ namespace RTSim {
 
         if (k == NULL) throw BaseExc("Kernel not found!");
 
-        DBGPRINT("Before lowing threshold for task " << _father->getName());
-
-        k->disableThreshold();
+        DBGPRINT("Before lowering threshold for task " << _father->getName());
+        k->disableThreshold();        
         k->dispatch();
 
         DBGPRINT("After lowing threshold for task " << _father->getName());

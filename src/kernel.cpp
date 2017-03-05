@@ -247,12 +247,11 @@ namespace RTSim {
        _sched->setThreshold(_currExe, th);
     }
 
-    int RTKernel::enableThreshold()
+    void RTKernel::enableThreshold()
     {
         DBGENTER(_KERNEL_DBG_LEV);
 
-        int tmp = _sched->enableThreshold(_currExe);
-        return tmp;
+        _sched->enableThreshold(_currExe);
     }
 
     void RTKernel::disableThreshold()

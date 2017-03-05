@@ -228,7 +228,7 @@ namespace RTSim {
         */
         virtual void setThreshold(int th);
 
-        virtual int enableThreshold();
+        virtual void enableThreshold();
 
         virtual void disableThreshold();
 

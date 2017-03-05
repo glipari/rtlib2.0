@@ -21,7 +21,7 @@
 namespace RTSim {
 
     using namespace MetaSim;
-
+    
 #define _FP_SCHED_DBG_LEV "fpsched"
 
     /**
@@ -47,11 +47,9 @@ namespace RTSim {
             Tick getPriority() const { return _prio; }
 
             /// @todo: check the type
-            void setPriority(Tick p) {_prio = p; }
+            void setPriority(Tick p) { _prio = p; }
 
-            void changePriority(Tick p) {
-                setPriority(p);
-            }
+            void changePriority(Tick p) { setPriority(p); }
         };
 
 

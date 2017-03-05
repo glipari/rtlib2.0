@@ -21,7 +21,7 @@ namespace RTSim {
 
     using namespace std;
     
-    ThreInstr::ThreInstr(Task * f, const string& th, const string &n)
+    ThreInstr::ThreInstr(Task * f, int th, const string &n)
         : Instr(f, n), _endEvt(this), _threEvt(f, this), _th(th)  
     {}
 
@@ -32,7 +32,8 @@ namespace RTSim {
    
     unique_ptr<ThreInstr> ThreInstr::createInstance(const vector<string> &par)
     {
-        unique_ptr<ThreInstr> ptr(new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), par[0]));
+        int th = stoi(par[0]);
+        unique_ptr<ThreInstr> ptr(new ThreInstr(dynamic_cast<Task*>(Entity::_find(par[1])), th));
         
         return ptr;
     }
@@ -71,10 +72,10 @@ namespace RTSim {
 
         DBGPRINT("Before lowing threshold for task " << _father->getName());
 
-        k->setThreshold(0);
+        k->setThreshold(_th);
         k->enableThreshold();
 
-        DBGPRINT("After lowing threshold for task " << _father->getName());
+        DBGPRINT("After raising threshold for task " << _father->getName());
 
         _threEvt.process();    
     }
