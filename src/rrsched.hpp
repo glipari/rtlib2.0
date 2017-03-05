@@ -58,7 +58,7 @@ namespace RTSim {
             RRModel(AbsRTTask* t) : TaskModel(t), _rrSlice(1) {}
             virtual ~RRModel() {}
 
-            virtual Tick getPriority();
+            virtual Tick getPriority() const;
             virtual void changePriority(Tick p);
 
             /**

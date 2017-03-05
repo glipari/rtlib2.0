@@ -59,22 +59,16 @@ namespace RTSim {
     class ThreInstr : public Instr {
         EndInstrEvt _endEvt; 
         ThreEvt _threEvt;
-        std::string _th;
+        int _th;
 
         ThreInstr(const ThreInstr &other);
         
     public:
         /**
          //      This is the constructor of the ThreInstr.
-         //      @param f is a pointer to the task containing the pseudo
-         //      instruction
-         //      @param r is the name of the resorce manager handling the
-         //      resource which the task is accessing
-         //      @param nr is the number of resources being taken
-         //      @param n is the instruction name
          */
 
-        ThreInstr(Task * f, const std::string& th, const std::string &n = "");
+        ThreInstr(Task * f, int th, const std::string &n = "");
 
         CLONEABLE(Instr, ThreInstr)
 
@@ -98,7 +92,7 @@ namespace RTSim {
         virtual void newRun() {}
         virtual void endRun();
 
-        std::string getThres() const { return _th; }                
+        int getThres() const { return _th; }                
         
         /** Function inherited from clss Instr.It refreshes the state 
          *  of the executing instruction when a change of the CPU speed occurs. 

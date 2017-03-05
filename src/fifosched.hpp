@@ -29,7 +29,7 @@ namespace RTSim {
         class FIFOModel : public TaskModel {
         public:
             FIFOModel(AbsRTTask *t) : TaskModel(t) {}
-            Tick getPriority() { return _rtTask->getArrival(); }
+            Tick getPriority() const { return _rtTask->getArrival(); }
             void changePriority(MetaSim::Tick)
                 {
                     cerr << "Warning! changePriority called on a FIFOModel" << endl;

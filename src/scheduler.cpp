@@ -24,7 +24,7 @@ namespace RTSim {
 
     TaskModel::TaskModel(AbsRTTask* t)
         : _rtTask(t), active(false), 
-         _insertTime(0), _threshold(INT_MAX) 
+          _insertTime(0), _threshold(INT_MAX) 
     {
     }
 
@@ -58,6 +58,19 @@ namespace RTSim {
         return active;
     }
 
+    void TaskModel::raiseThreshold()
+    {
+        // @todo check that we are actually raising the priority !
+        _savedPriority = getPriority();
+        changePriority(getThreshold());
+    }
+
+    void TaskModel::restorePriority()
+    {
+        changePriority(_savedPriority);
+    }
+
+
 /*-----------------------------------------------------------------*/
 
     Scheduler::Scheduler(): Entity(""), _kernel(0), _queue(), _tasks(), _currExe(0)
@@ -76,9 +89,9 @@ namespace RTSim {
         _tasks[task] = model;
     }
 
-    TaskModel* Scheduler::find(AbsRTTask* task)
+    TaskModel* Scheduler::find(AbsRTTask* task) const
     {
-        map<AbsRTTask*, TaskModel*>::iterator mi = _tasks.find(task);
+        auto mi = _tasks.find(task);
 	
         if (mi == _tasks.end()) 
             return NULL;
@@ -92,7 +105,7 @@ namespace RTSim {
 
     void Scheduler::insert(AbsRTTask* task) throw(RTSchedExc, BaseExc)
     {
-        DBGENTER("Scheduler");
+        DBGENTER(_SCHED_DBG_LEVEL);
 
         TaskModel* model = find(task);
 	
@@ -111,6 +124,8 @@ namespace RTSim {
 
     void Scheduler::extract(AbsRTTask* task) throw(RTSchedExc, BaseExc)
     {
+        DBGENTER(_SCHED_DBG_LEVEL);
+
         TaskModel* model = find(task);
 	
         if (model == NULL) // raise an exception
@@ -120,7 +135,7 @@ namespace RTSim {
         model->setInactive();
     }
 
-    int Scheduler::getPriority(AbsRTTask* task) throw(RTSchedExc)
+    int Scheduler::getPriority(AbsRTTask* task) const throw(RTSchedExc)
     {
         TaskModel* model = find(task);
 	
@@ -129,13 +144,6 @@ namespace RTSim {
 		
         return model->getPriority();
     }
-
-    void Scheduler::changePriority(AbsRTTask* task, const std::string &params) 
-        throw(RTSchedExc)
-    {
-        
-    }
-
 
     int Scheduler::getThreshold(AbsRTTask* task) throw(RTSchedExc)
     { 
@@ -147,7 +155,7 @@ namespace RTSim {
         return model->getThreshold();
     } 
  
-    void Scheduler::setThreshold(AbsRTTask *task, const int th) throw(RTSchedExc)
+    void Scheduler::setThreshold(AbsRTTask *task, int th) throw(RTSchedExc)
     {
         TaskModel* model = find(task);
         
@@ -157,48 +165,43 @@ namespace RTSim {
         model->setThreshold(th);
     }
 
-    int Scheduler::enableThreshold(AbsRTTask* task)
+    void Scheduler::enableThreshold(AbsRTTask* task)
         throw(RTSchedExc)
     {
+        DBGENTER(_SCHED_DBG_LEVEL);
+
         TaskModel* model = find(task);
 	
         if (model == NULL)
             throw RTSchedExc("AbsRTTask not found");
 
-        oldPriorities[task] = model->getPriority();
-
-        extract(task);
-
-        int tmp = model->getThreshold();
-
-        //TODO: add some logic to avoid using or minimize threshold  
-
-        model->changePriority(tmp);
-	
-        insert(task);
-	
-        return tmp;
+        // the check for the executing task is in the kernel
+        model->raiseThreshold();
     }
 
     void Scheduler::disableThreshold(AbsRTTask *task) throw(RTSchedExc)
     {
-        //TODO: remove the old priority from the oldPriorities map	
+        DBGENTER(_SCHED_DBG_LEVEL);
+
         TaskModel* model = find(task);
         
         if (model == NULL)
             throw RTSchedExc("AbsRTTask not found");
         
-        extract(task);
-        
-        model->changePriority(model->getPriority());
-        
-        insert(task);
-        
-        _kernel->dispatch();
+        if (model->isActive()) {
+            extract(task);
+            model->restorePriority();
+            insert(task);
+            _kernel->dispatch();
+
+        }
+        else model->restorePriority();
     }
 
     void Scheduler::discardTasks(bool f)
     {
+        DBGENTER(_SCHED_DBG_LEVEL);
+
         typedef map<AbsRTTask*, TaskModel*>::iterator IT;
         
         _queue.clear();
@@ -217,7 +220,7 @@ namespace RTSim {
 
     AbsRTTask* Scheduler::getTaskN(unsigned int n)
     {
-        DBGENTER("Kernel");
+        DBGENTER(_SCHED_DBG_LEVEL);
 
         if ( _queue.size() <= n ) {
             
@@ -235,7 +238,7 @@ namespace RTSim {
 
     void Scheduler::notify(AbsRTTask* task)
     {
-        DBGENTER("Kernel");
+        DBGENTER(_SCHED_DBG_LEVEL);
         _currExe = task;
         
     }

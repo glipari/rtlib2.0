@@ -26,6 +26,9 @@ namespace RTSim {
 
     class AbsKernel;
 
+    
+    const std::string _SCHED_DBG_LEVEL = "SCHEDULER_DEBUG";
+    
     /**
        \ingroup sched 
     */
@@ -50,8 +53,8 @@ namespace RTSim {
         AbsRTTask* _rtTask;
         bool active;
         int _insertTime;
-
         int _threshold;
+        Tick _savedPriority;
 
     public:
         TaskModel(AbsRTTask *t);
@@ -64,7 +67,7 @@ namespace RTSim {
         /**
          * Returns the priority of the task.
          */
-        virtual Tick getPriority() = 0;
+        virtual Tick getPriority() const = 0;
 
         /**
          * Returns the task number;
@@ -77,14 +80,32 @@ namespace RTSim {
         virtual void changePriority(Tick p) = 0;
 
         /**
-         * Returns the preemption threshold of the task t
+         * Returns the preemption threshold
          */
-        int getThreshold(){ return _threshold; }
+        int getThreshold() { return _threshold; }
 
         /**
          * Sets the preemption threshold of the task t.
          */
         void setThreshold(const int th){ _threshold = th; }
+
+        /**
+           This function raises the threshold of the current task. This is equivalent to :
+           - saving the old value of the priority 
+           - setting the new priority value to th.
+
+           You must make sure that the task model on which this
+           function is called MUST BE the highest priority task.
+         */
+        void raiseThreshold();
+
+        /**
+           Restores the original task priority. This is the opposite
+           of raiseThreshold, and must be performed on the currently
+           executing task, after it has been removed from the
+           queue. In some cases, it may cause a change of context.
+         */
+        void restorePriority();
 
         /**
          * Set the active flag of the task. It happens when
@@ -118,16 +139,16 @@ namespace RTSim {
         public:
             /* 
                Remember that lower numbers mean higher priorities...
+
                This function returns true if "a" has higher priority
-               than "b".  This function was modified to work also in
-               EDF*:
+               than "b". 
                            
                - when 2 tasks have the same priority (i.e. deadline in
                EDF*), then the priority is decided basing upon the
                insertion time (see setInsertTime() method).
 
                - when 2 tasks have the same priority and the same
-               insertion time, then the priority is decided basing
+               insertion time, then the priority is decided based
                upon the task number (lower number => higher priority)
 
                It is possible to specify a "slice" time for each
@@ -143,9 +164,6 @@ namespace RTSim {
                By using the slice time, it is possible to implement
                the SCHED_RR policy of POSIX, by using a fixed
                priority, and setting the slice time for each task.
-
-               @todo check if this works with multi-processors (I
-               guess not).
             */
             bool operator()(TaskModel* a, TaskModel* b) const;
         };
@@ -196,24 +214,28 @@ namespace RTSim {
          */
         virtual void extract(AbsRTTask *) throw(RTSchedExc, BaseExc);
 
-        int getPriority(AbsRTTask* task) throw(RTSchedExc);
+        int getPriority(AbsRTTask* task) const throw(RTSchedExc);
 
-        void changePriority(AbsRTTask* task, const std::string &params) 
-            throw(RTSchedExc);
+        // void changePriority(AbsRTTask* task, const std::string &params) 
+        //     throw(RTSchedExc);
 
         /**
-         * Manages the request of a task to raise his own 
-         * preemption threshold
          */
-        virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
-        virtual int enableThreshold(AbsRTTask* t) throw(RTSchedExc);
-        virtual void disableThreshold(AbsRTTask* t) throw(RTSchedExc);
+        // virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
+        void enableThreshold(AbsRTTask* t) throw(RTSchedExc);
+        void disableThreshold(AbsRTTask* t) throw(RTSchedExc);
+
+        /**
+         * Sets the preemption threshold of task t. Throws an exception
+         * if the task does not exist
+         */        
+        void setThreshold(AbsRTTask *t, int th) throw(RTSchedExc);
 
         /**
          * Returns the preemption threshold of task t. Throws an exception
          * if the task does not exist
          */
-        virtual int getThreshold(AbsRTTask *t) throw(RTSchedExc);
+         int getThreshold(AbsRTTask *t) throw(RTSchedExc);
 
 
         /**
@@ -280,7 +302,7 @@ namespace RTSim {
          * This function returns a TaskModel from a task. It is
          * used mainly inside this class, but it can also be
          * used by some resource manager. */
-        TaskModel* find(AbsRTTask* task);
+        TaskModel* find(AbsRTTask* task) const;
     
         /// @todo change it into ResManager
         friend class PIRManager;

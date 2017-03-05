@@ -42,7 +42,7 @@ namespace RTSim {
     protected:
         SchedInstr * ti;
     public:
-        SchedIEvt(Task* t, SchedInstr* in) :TaskEvt(t, _DEFAULT_PRIORITY - 3), ti(in)
+        SchedIEvt(Task* t, SchedInstr* in) :TaskEvt(t, _DEFAULT_PRIORITY - 1), ti(in)
             {}
         SchedInstr *getInstr() { return ti; } 
         virtual void doit() {}

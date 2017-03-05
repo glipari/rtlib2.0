@@ -152,19 +152,19 @@ namespace RTSim {
         execdTime = 0;
         actInstr = instrQueue.begin();
 
-        cout << "Task::handleArrival() instrQueue.begin() accessed " << endl;
+        DBGPRINT("Task::handleArrival() instrQueue.begin() accessed ")
                 
         // reset all instructions
         auto p = instrQueue.begin();
         while (p != instrQueue.end()) {
-            cout << "Resetting" << endl;
-            if (*p == nullptr) cout << "SERIOUS PROBLEM!!" << endl;
+            DBGPRINT("Resetting");
+            if (*p == nullptr) DBGPRINT("SERIOUS PROBLEM!!");
             (*p)->reset();
-            cout << "Reset" << endl;
+            DBGPRINT("Reset");
             p++;
         }
 
-        cout << "Task::handleArrival() after reset " << endl;
+        DBGPRINT("Task::handleArrival() after reset ");
         
         state = TSK_READY;
         _dl = getArrival() + _rdl;
@@ -448,12 +448,14 @@ namespace RTSim {
             DBGPRINT("not active...");
             throw TaskNotActive("onInstrEnd() on a non-active task");
         }
+
         // this exception conflicts with the implementation of suspendInstr. 
         // I am removing it for the moment
         // if (not isExecuting()) {
         //     DBGPRINT("not executing...");
         //     throw TaskNotExecuting("OnInstrEnd() on a non executing task");
         // }
+
         execdTime += (*actInstr)->getExecTime();
         actInstr++;
         if (actInstr == instrQueue.end()) {
