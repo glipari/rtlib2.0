@@ -58,36 +58,30 @@ namespace RTSim {
 
     public:
         TaskModel(AbsRTTask *t);
-
         virtual ~TaskModel();
 
-        /// returns a pointer to the task
+        /// Returns a pointer to the task
         AbsRTTask *getTask() { return _rtTask; }
 
-        /**
-         * Returns the priority of the task.
-         */
+        /// Returns the priority of the task. It depends on the scheduler
         virtual Tick getPriority() const = 0;
 
-        /**
-         * Returns the task number;
-         */
+        /// Returns the task's preemption level. It depends on the scheduler
+        //virtual Tick getPreemptionLevel() const = 0;
+        
+        /// Returns the task number
         int getTaskNumber() { return _rtTask->getTaskNumber(); }
 
-        /**
-         * Changes the task priority
-         */
+        /// changes the task's priority
         virtual void changePriority(Tick p) = 0;
 
-        /**
-         * Returns the preemption threshold
-         */
-        int getThreshold() { return _threshold; }
+        /// TODO deprecated
+        int getThreshold() __attribute__((deprecated))
+            { return _threshold; } 
 
-        /**
-         * Sets the preemption threshold of the task t.
-         */
-        void setThreshold(const int th){ _threshold = th; }
+        /// TODO deprecated
+        void setThreshold(const int th) __attribute__((deprecated))
+            { _threshold = th; }
 
         /**
            This function raises the threshold of the current task. This is equivalent to :
@@ -97,7 +91,7 @@ namespace RTSim {
            You must make sure that the task model on which this
            function is called MUST BE the highest priority task.
          */
-        void raiseThreshold();
+        void raiseThreshold() __attribute__((deprecated));
 
         /**
            Restores the original task priority. This is the opposite
@@ -105,7 +99,7 @@ namespace RTSim {
            executing task, after it has been removed from the
            queue. In some cases, it may cause a change of context.
          */
-        void restorePriority();
+        void restorePriority() __attribute__((deprecated));
 
         /**
          * Set the active flag of the task. It happens when
@@ -128,12 +122,12 @@ namespace RTSim {
            Set the insertion time. Used to control the order
            between two tasks with the same priority.
         */
-        virtual void setInsertTime(Tick t) { _insertTime = t; }
+        void setInsertTime(Tick t) { _insertTime = t; }
 
         /**
            Returns the insertion time.
         */ 
-        virtual Tick getInsertTime() { return _insertTime; }
+        Tick getInsertTime() { return _insertTime; }
 
         class TaskModelCmp {
         public:
@@ -214,26 +208,31 @@ namespace RTSim {
          */
         virtual void extract(AbsRTTask *) throw(RTSchedExc, BaseExc);
 
+        /** returns the priority of the task */
         int getPriority(AbsRTTask* task) const throw(RTSchedExc);
 
-        // void changePriority(AbsRTTask* task, const std::string &params) 
-        //     throw(RTSchedExc);
-
-        /**
-         */
-        // virtual void setThreshold(AbsRTTask *t, const int th) throw(RTSchedExc);           
+        /** raises the threshold of the task */
         void enableThreshold(AbsRTTask* t) throw(RTSchedExc);
+        /** lowers the threshold of the task */
         void disableThreshold(AbsRTTask* t) throw(RTSchedExc);
 
         /**
-         * Sets the preemption threshold of task t. Throws an exception
-         * if the task does not exist
+         * Sets the preemption threshold of task t. Throws an
+         * exception if the task does not exist. 
+         *
+         * Note that the preemption threshold is currently a constant
+         * (integer) value. Different schedulers needs to interpret
+         * this value differently. For example, in EDF this would be a
+         * relative deadline, in FixedPriority it is just a priority,
+         * in RRSched it makes no sense at all. This makes the
+         * interface not really robust. 
          */        
         void setThreshold(AbsRTTask *t, int th) throw(RTSchedExc);
 
         /**
-         * Returns the preemption threshold of task t. Throws an exception
-         * if the task does not exist
+         * Returns the preemption threshold of task t. Throws an
+         * exception if the task does not exist or if the scheduler
+         * does not support preemption thresholds
          */
          int getThreshold(AbsRTTask *t) throw(RTSchedExc);
 

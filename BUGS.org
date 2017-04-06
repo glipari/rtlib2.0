@@ -1,8 +1,14 @@
 #+OPTIONS: 
-#+TODO: OPEN ASSIGNED | FIXED NOT_APPLICABLE
+#+TODO: OPEN(!) ASSIGNED(@) | FIXED(@) CANCELED(@)
 
 * List of known bugs for RTLIB 2.0
-** OPEN Instruction parser fails silently
+
+** ASSIGNED Instruction parser fails silently
+
+   - State "ASSIGNED"   from "OPEN"       [2017-04-06 jeu. 13:45] \\
+     Giuseppe Lipari
+   - State "OPEN"       from              [2017-04-06 jeu. 13:44]
+
    For example, if the programmer forgets the final ; after and instruction, 
    the instruction object is not created
 
@@ -14,7 +20,11 @@
    it will not create lower_thres
 
 
-** OPEN Instruction parser fails when instruction has no arguments
+** ASSIGNED Instruction parser fails when instruction has no arguments
+   - State "ASSIGNED"   from "OPEN"       [2017-04-06 jeu. 13:45] \\
+     Giuseppe
+   - State "OPEN"       from              [2017-04-06 jeu. 13:44]
+
    For example, if the programmer forgets an argument as follows
 
    #+BEGIN_SRC c++
@@ -22,3 +32,12 @@
    #+END_SRC
    the last instruction is not created. This bug makes it impossible
    to write instructions with no parameters
+
+
+** OPEN Debug does not work 
+
+   - State "OPEN"       from              [2017-04-06 jeu. 13:44]
+
+   When selecting SIMUL.debug("All"), it will only print metasim
+   debugging information. When selecting a specific constant (like
+   _SCHED_DBG_LEV) it will print nothing.

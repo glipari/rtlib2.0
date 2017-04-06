@@ -227,7 +227,7 @@ namespace RTSim {
            the executing task to the scheduler.
         */
         virtual void setThreshold(int th);
-
+        
         virtual void enableThreshold();
 
         virtual void disableThreshold();

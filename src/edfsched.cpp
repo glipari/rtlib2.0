@@ -16,10 +16,11 @@
 
 namespace RTSim {
 
-    EDFModel::EDFModel(AbsRTTask* t) :TaskModel(t), extP(false) {}
+    EDFModel::EDFModel(AbsRTTask* t) :TaskModel(t), extP(false) {
+    }
 
     Tick EDFModel::getPriority() const {
-        if (extP) return prio;
+        if (extP) return prio;  // implicit conversion !!
         else return _rtTask->getDeadline(); 
     }
 
