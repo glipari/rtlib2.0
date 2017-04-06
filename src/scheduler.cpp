@@ -62,11 +62,14 @@ namespace RTSim {
     {
         // @todo check that we are actually raising the priority !
         _savedPriority = getPriority();
+        cout << "New priority: " << getThreshold() << " / old priority: " << _savedPriority << endl;
         changePriority(getThreshold());
     }
 
     void TaskModel::restorePriority()
     {
+        DBGTAG(_SCHED_DBG_LEVEL, "Restoring Priority");
+        cout << "Restoring priority from: " << getPriority() << " to: " << _savedPriority << endl;
         changePriority(_savedPriority);
     }
 
@@ -182,11 +185,13 @@ namespace RTSim {
     void Scheduler::disableThreshold(AbsRTTask *task) throw(RTSchedExc)
     {
         DBGENTER(_SCHED_DBG_LEVEL);
-
+        
         TaskModel* model = find(task);
         
         if (model == NULL)
             throw RTSchedExc("AbsRTTask not found");
+
+        cout << "disableThreshold called" << endl;
         
         if (model->isActive()) {
             extract(task);

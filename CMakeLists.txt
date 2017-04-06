@@ -6,6 +6,11 @@ set(CMAKE_BUILD_TYPE Debug)
 
 set(LIBRARY_TYPE STATIC)
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  add_definitions(-D__DEBUG__)
+  message("Debug added as a compilation flag")
+endif()
+
 # Import MetaSim
 find_package(metasim REQUIRED)
 set(metasim_INCLUDE_DIRS "${metasim_DIR}/include")

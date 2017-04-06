@@ -152,7 +152,7 @@ namespace RTSim {
         execdTime = 0;
         actInstr = instrQueue.begin();
 
-        DBGPRINT("Task::handleArrival() instrQueue.begin() accessed ")
+        DBGPRINT("Task::handleArrival() instrQueue.begin() accessed ");
                 
         // reset all instructions
         auto p = instrQueue.begin();

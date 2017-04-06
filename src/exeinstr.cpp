@@ -55,13 +55,13 @@ namespace RTSim {
         executing(false),
         _endEvt(this)
     {
-        DBGTAG(_INSTR_DBG_LEV,"ExecInstr copy constructor");
+        DBGTAG(_INSTR_DBG_LEV, "ExecInstr copy constructor");
     }
 
     
     ExecInstr::~ExecInstr()
     {
-        cout << "ExecInstr::~ExecInstr() called" << endl;
+        DBGTAG(_INSTR_DBG_LEV, "ExecInstr::~ExecInstr() called");
     }    
     
 

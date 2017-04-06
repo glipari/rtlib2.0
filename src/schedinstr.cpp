@@ -22,16 +22,17 @@ namespace RTSim {
 
     SchedInstr::SchedInstr(const SchedInstr &si)
         : Instr(si), _endEvt(this), _threEvt(si.getTask(), this) 
-    {}
+    {
+    }
     
     SchedInstr::SchedInstr(Task * f, const string& s, const string &n)
         : Instr(f, n), _endEvt(this), _threEvt(f, this) 
-    {}
+    {
+    }
 
     unique_ptr<SchedInstr> SchedInstr::createInstance(const vector<string> &par)
     {
         unique_ptr<SchedInstr> ptr(new SchedInstr(dynamic_cast<Task *>(Entity::_find(par[1])),par[0]));
-        
         return ptr;
     }
 
