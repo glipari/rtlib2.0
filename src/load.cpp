@@ -100,7 +100,7 @@ namespace RTSim {
     bool IATGen::generate()
     {
         UniformVar r(tMin,tMax);
-        for (register int i = 0; i < taskSet->size(); i++) {
+        for (int i = 0; i < taskSet->size(); i++) {
             avg[i] = Tick::round(r.get()) * tGCD;
             if (getMin(i) < minT) return false;
         }
@@ -170,7 +170,7 @@ namespace RTSim {
     bool ConstIATGen::generate() 
     { 
         if (IATGen::generate()) {
-            for (register int i = 0; i < taskSet->size(); i++) {
+            for (int i = 0; i < taskSet->size(); i++) {
                 if(va[i]!=0)
                     delete va[i];
                 va[i] = new DeltaVar(getAvg(i));
@@ -197,7 +197,7 @@ namespace RTSim {
     bool UniformIATGen::generate()
     {
         if (IATGen::generate()) {
-            for (register int i = 0; i < taskSet->size(); i++) {
+            for (int i = 0; i < taskSet->size(); i++) {
                 if(va[i]!=0)
                     delete va[i];
                 va[i] = new UniformVar(getMin(i),getMax(i));
@@ -210,7 +210,7 @@ namespace RTSim {
     // ... and eventually the concrete CTGen:
     bool ConstCTGen::generate() 
     { 
-        for (register int i = 0; i < taskSet->size(); i++) {
+        for (int i = 0; i < taskSet->size(); i++) {
             if (getAvg(i) < minC) 
                 return false;
             else{
@@ -246,11 +246,11 @@ namespace RTSim {
 
     bool UniformCTGen::generate() 
     { 
-        for (register int i = 0; i < taskSet->size(); i++) 
+        for (int i = 0; i < taskSet->size(); i++)
             if (getMin(i) < minC) return false;
         // If we reach this, then ALL the For all i : getMin(i) >= minC
         // We can build the vector of Random Vars
-        for (register int i = 0; i < taskSet->size(); i++){
+        for (int i = 0; i < taskSet->size(); i++){
             if(va[i]!=0)
                 delete va[i];
             va[i] = new UniformVar(getMin(i),getMax(i));
@@ -259,7 +259,7 @@ namespace RTSim {
     }
 
     UniformCTGen::~UniformCTGen()
-    {  for (register int i = 0; i < taskSet->size(); i++){
+    {  for (int i = 0; i < taskSet->size(); i++){
             va[i] = 0;}
     }
 
@@ -283,14 +283,14 @@ namespace RTSim {
 
     bool DlineEquPeriodDTGen::generate()
     {
-        for (register int i = 0; i < taskSet->size(); i++)
+        for (int i = 0; i < taskSet->size(); i++)
             va[i] = iatGen->getAvg(i);
         return true;
     }
 
     bool SporadicDTGen::generate()
     {
-        for (register int i = 0; i < taskSet->size(); i++) {
+        for (int i = 0; i < taskSet->size(); i++) {
             va[i] = iatGen->getMin(i);
         }
         return true;
@@ -298,7 +298,7 @@ namespace RTSim {
 
     bool RandomDTGen::generate()
     {
-        for (register int i = 0; i < taskSet->size(); i++) {
+        for (int i = 0; i < taskSet->size(); i++) {
             UniformVar x(_min, _max);
             va[i] = Tick::round(x.get() * double(iatGen->getMin(i)));
             va[i] = max(ctGen->getMax(i), va[i]);
@@ -320,7 +320,7 @@ namespace RTSim {
 
     bool RandomOffsetGen::generate()
     {
-        for (register int i = 0; i < taskSet->size(); i++) { 
+        for (int i = 0; i < taskSet->size(); i++) {
             int mylimit = (int) (iatGen->getMin(i)/_step);
             if (_islimit) mylimit = min(mylimit, _limit/_step);
             UniformVar r(0,mylimit);
@@ -340,7 +340,7 @@ namespace RTSim {
     bool RandomTaskSetFactory::generateLoad() 
     {
         UniformVar r(0,1);
-        register int i;
+        int i;
         double tot = 0.0;
 
         load.clear();
@@ -423,7 +423,7 @@ namespace RTSim {
     void RandomTaskSetFactory::sinthesize()
     {
         // Now build the task set!
-        for (register int i = 0; i < _size; i++) {
+        for (int i = 0; i < _size; i++) {
             Task *t = sinthesize(i);
             tasks.push_back(t);
         }
@@ -569,7 +569,7 @@ namespace RTSim {
     double RandomTaskSetFactory::getAvgLoad()  const
     {
         double r = 0.0;
-        for (register int i = 0; i < _size; i++) 
+        for (int i = 0; i < _size; i++)
             r += getAvgLoad(i);    
         return r;
     }
@@ -584,7 +584,7 @@ namespace RTSim {
     double RandomTaskSetFactory::getMaxLoad()  const
     {
         double r = 0.0;
-        for (register int i = 0; i < _size; i++) 
+        for (int i = 0; i < _size; i++)
             r += getMaxLoad(i);
         return r;
     }
@@ -599,7 +599,7 @@ namespace RTSim {
     double RandomTaskSetFactory::getMinLoad()  const
     {
         double r = 0.0;
-        for (register int i = 0; i < _size; i++) 
+        for (int i = 0; i < _size; i++)
             r += getMinLoad(i);
         return r;
     }
@@ -610,7 +610,7 @@ namespace RTSim {
 //         // it is not necessary anymore, as the instructions are deleted 
 //         // by the task.
 
-//         //for (register unsigned int i = 0; i < tasks.size(); i++) {
+//         //for (unsigned int i = 0; i < tasks.size(); i++) {
 //         //  tasks[i]->discardInstrs(true);
 //         //}
 
@@ -640,7 +640,7 @@ namespace RTSim {
         //dbg.enable("__tset__");
         //dbg.enter("__tset__");
         cout << "Task Set" << endl;
-        for (register int i = 0; i < _size; i++) {
+        for (int i = 0; i < _size; i++) {
             print(i);
             cout  << "------------------------------------------------" 
                   << endl;
