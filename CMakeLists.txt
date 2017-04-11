@@ -24,9 +24,17 @@ message("Metasim configuration file directory: ${metasim_DIR}")
 message("Metasim include directory: ${metasim_INCLUDE_DIRS}")
 message("Metasim library: ${metasim_LIBRARIES}")
 
+#include contrib
+set(contrib_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/contrib/pwcet_simul/")
+set(contrib_LIBRARIES "${PROJECT_SOURCE_DIR}/contrib/pwcet_simul/libpwcet.a")
+
+message("contrib include dirs: ${contrib_INCLUDE_DIRS}")
+message("contrib libraries: ${contrib_LIBRARIES}")
+
 # Include dirs
 add_subdirectory (src)
 add_subdirectory (examples)
 
 enable_testing (true)
 add_subdirectory (test)
+

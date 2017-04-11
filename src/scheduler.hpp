@@ -74,7 +74,7 @@ namespace RTSim {
 
         /// changes the task's priority
         virtual void changePriority(Tick p) = 0;
-
+        
         /// TODO deprecated
         int getThreshold() __attribute__((deprecated))
             { return _threshold; } 

@@ -93,7 +93,7 @@ namespace RTSim {
         virtual void deschedule();
         virtual void onEnd();
         virtual void reset();
-        virtual Tick getDuration() const;
+        virtual Tick getDuration() const __attribute__((deprecated));
         virtual Tick getWCET() const throw(RandomVar::MaxException);
         virtual Tick getExecTime() const;
 

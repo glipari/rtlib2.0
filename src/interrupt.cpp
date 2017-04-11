@@ -36,57 +36,57 @@ namespace RTSim {
   using namespace MetaSim;
 
     Interrupt::Interrupt(RandomVar *iat, 
-			 int burstperiod, 
-			 RandomVar *burstlenght, const char *name) :
-	Entity(name),
-	int_time(iat),
-	bp(burstperiod),
-	burst_lenght(burstlenght),
-	count(0),
-	max_act(0),
-	triggerEvt(this, &Interrupt::onTrigger)
+                         int burstperiod, 
+                         RandomVar *burstlenght, const char *name) :
+        Entity(name),
+        int_time(iat),
+        bp(burstperiod),
+        burst_lenght(burstlenght),
+        count(0),
+        max_act(0),
+        triggerEvt(this, &Interrupt::onTrigger)
     {
-	if (burst_lenght == NULL) burst_lenght = new DeltaVar(1);   
-	//register_handler(triggerEvt, this, &Interrupt::onTrigger);
+        if (burst_lenght == NULL) burst_lenght = new DeltaVar(1);   
+        //register_handler(triggerEvt, this, &Interrupt::onTrigger);
     }
 
-  Interrupt::~Interrupt()
-  {
-    delete int_time;
-    delete burst_lenght;
-  }
+    Interrupt::~Interrupt()
+    {
+        delete int_time;
+        delete burst_lenght;
+    }
 
-  void Interrupt::addTask(Task *t)
-  {
-    tasks.push_back(t);
-  }
+    void Interrupt::addTask(Task *t)
+    {
+        tasks.push_back(t);
+    }
 
-  void Interrupt::newRun()
-  {
-    assert(int_time != NULL);
-    assert(burst_lenght != NULL);
+    void Interrupt::newRun()
+    {
+        assert(int_time != NULL);
+        assert(burst_lenght != NULL);
 
-    triggerEvt.post((int)(int_time->get()));
-    max_act = static_cast<int>(burst_lenght->get());
-    count = 0;
-  }
+        triggerEvt.post((int)(int_time->get()));
+        max_act = static_cast<int>(burst_lenght->get());
+        count = 0;
+    }
 
-  void Interrupt::endRun() 
-  {
-  }
+    void Interrupt::endRun() 
+    {
+    }
 
-  void Interrupt::onTrigger(Event *e)
-  {
-    for (unsigned int i=0; i<tasks.size(); ++i) tasks[i]->activate();
+    void Interrupt::onTrigger(Event *e)
+    {
+        for (unsigned int i=0; i<tasks.size(); ++i) tasks[i]->activate();
     
-    count ++;
-    if (count == max_act) {
-      triggerEvt.post(SIMUL.getTime() + (int)(int_time->get()));
-      max_act = static_cast<int>(burst_lenght->get());
-      count = 0;
+        count ++;
+        if (count == max_act) {
+            triggerEvt.post(SIMUL.getTime() + (int)(int_time->get()));
+            max_act = static_cast<int>(burst_lenght->get());
+            count = 0;
+        }
+        else
+            triggerEvt.post(SIMUL.getTime() + bp);
     }
-    else
-      triggerEvt.post(SIMUL.getTime() + bp);
-  }
 
 }

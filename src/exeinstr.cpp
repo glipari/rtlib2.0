@@ -181,8 +181,6 @@ namespace RTSim {
             lastTime = t; 
         }
         executing = false;
-
-        
     }
 
     // void ExecInstr::setTrace(Trace *t) {
@@ -205,7 +203,7 @@ namespace RTSim {
 
         DBGPRINT("internal data set... now calling the _father->onInstrEnd()");
 
-        _father->onInstrEnd();        
+        _father->onInstrEnd();     
     }
 
 

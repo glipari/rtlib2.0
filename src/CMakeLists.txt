@@ -1,6 +1,7 @@
 # Include dirs.
 include_directories(.)
 include_directories(${metasim_INCLUDE_DIRS})
+include_directories(${contrib_INCLUDE_DIRS})
 
 # Create a library called "rtlib" which includes the source files.
 add_library(${PROJECT_NAME} ${LIBRARY_TYPE} capacitytimer.cpp cbserver.cpp cpu.cpp
@@ -11,9 +12,10 @@ add_library(${PROJECT_NAME} ${LIBRARY_TYPE} capacitytimer.cpp cbserver.cpp cpu.c
   rmsched.cpp rrsched.cpp rttask.cpp schedinstr.cpp schedpoints.cpp schedrta.cpp 
   scheduler.cpp server.cpp sparepot.cpp sporadicserver.cpp supercbs.cpp 
   task.cpp taskevt.cpp texttrace.cpp threinstr.cpp timer.cpp traceevent.cpp 
-  tracepower.cpp waitinstr.cpp instr.cpp suspend_instr.cpp AVRTask.cpp json_trace.cpp)
+  tracepower.cpp waitinstr.cpp instr.cpp suspend_instr.cpp AVRTask.cpp json_trace.cpp
+  npreclaiming.cpp pwcet.cpp)
 
-target_link_libraries (${PROJECT_NAME} ${metasim_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} ${metasim_LIBRARIES} ${contrib_LIBRARIES})
 
 target_compile_features (${PROJECT_NAME} PRIVATE cxx_range_for)
 

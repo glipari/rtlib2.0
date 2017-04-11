@@ -18,6 +18,7 @@
 #include <schedinstr.hpp>
 #include <waitinstr.hpp>
 #include <suspend_instr.hpp>
+#include <pwcet.hpp>
 #include <reginstr.hpp>
 
 namespace RTSim {
@@ -34,6 +35,7 @@ namespace RTSim {
     const Instr::BASE_KEY_TYPE ScheduleName("lower_thres");
 
     const Instr::BASE_KEY_TYPE SuspendName("suspend");
+    const Instr::BASE_KEY_TYPE PWCETInstrName("pwcet");
 
     /** 
         This namespace should never be used by the user. Contains
@@ -68,6 +70,9 @@ namespace RTSim {
 
         static registerInFactory<Instr, SuspendInstr, Instr::BASE_KEY_TYPE>
         registerSuspend(SuspendName);
+
+        static registerInFactory<Instr, PWCETInstr, Instr::BASE_KEY_TYPE>
+        registerPWCET(PWCETInstrName);
     }
 
     void __reginstr_init() {}
