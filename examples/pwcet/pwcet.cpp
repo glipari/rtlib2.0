@@ -5,6 +5,7 @@
 #include <json_trace.hpp>
 #include <rttask.hpp>
 #include <npreclaiming.hpp>
+#include <taskstat.hpp>
 
 #include <cstdlib>
 #include <unistd.h>
@@ -30,6 +31,7 @@ struct TaskStruct {
     long maxbudget = 0;
     long blocking_budget = 0;
     long blocking_max = 0;
+    MissCount mc;
 };
 
 std::vector<TaskStruct> taskdata;
@@ -141,10 +143,12 @@ bool sched_analysis(vector<TaskStruct> &taskdata)
 
 void print_usage(const char *progname)
 {
-    cout << "Usage: " << progname << " [-po] filename " << endl;
+    cout << "Usage: " << progname << " [-polt] filename " << endl;
     cout << "Options: " << endl;
     cout << "            -p : disables pwcet control" << endl;
     cout << "   -o filename : output file name" << endl;
+    cout << "     -l length : simulation length" << endl;
+    cout << "     -t length : transitory length" << endl;
 }
 
 int main(int argc, char *argv[])
@@ -152,21 +156,31 @@ int main(int argc, char *argv[])
     int c;
     bool pwcet_flag = true;
     string outfilename = "results.txt";
+    Tick transitory = 0;
+    Tick simul_time = 5000000;
 
     if (argc < 2) {
         print_usage(argv[0]);
         exit(-1);
     }
     
-    while ((c = getopt (argc, argv, "po:")) != -1) {
+    while ((c = getopt (argc, argv, "po:l:t:")) != -1) {
         switch(c) {
         case 'p' :
             cout << "PWCET disabled" << endl;
             pwcet_flag = false;
             break;
         case 'o' :
-            cout << "Output file name" << optarg << endl;
+            cout << "Output file name = " << optarg << endl;
             outfilename = string(optarg);
+            break;
+        case 't' :
+            transitory = atoi(optarg);
+            cout << "Transitory = " << transitory << endl;
+            break;
+        case 'l' :
+            simul_time = atoi(optarg);
+            cout << "Simulation time = " << simul_time << endl;
             break;
         case '?' :
             print_usage(argv[0]);
@@ -196,13 +210,15 @@ int main(int argc, char *argv[])
         task->insertCode(code.str());
         ttrace.attachToTask(*task);
         kern.addTask(*task);
+        x.mc.attachToTask(task.get());
         tasks.push_back(move(task));
     }
     
     DropStat stat;
-    stat.attach(server);
+    stat.attach(server);    
     
-    Tick simul_time = 5000000;
+    BaseStat::setTransitory(transitory);
+
     
     SIMUL.run(simul_time);
     
@@ -211,7 +227,10 @@ int main(int argc, char *argv[])
     ofstream out(outfilename);
     
     for (auto x : taskdata)
-        out << left <<  setw(15) << x.name << ": dropped = " << setw(3) << stat.get_dropped(x.name) << " | instances = " << setw(3) << simul_time / x.period << endl;
+        out << left <<  setw(15) << x.name
+            << ": dropped = " << setw(3) << stat.get_dropped(x.name)
+            << " | instances = " << setw(3) << simul_time / x.period
+            << " | miss = " << setw(3) << x.mc.getValue() << endl;
 
     out.close();
 }
