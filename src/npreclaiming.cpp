@@ -27,7 +27,7 @@ namespace RTSim {
     bool NPReclaimingServer::add_task(Task *t, Tick budget, Tick maxbudget)
     {
         budget_list[t] = budget;
-        maxb_list[t] = maxbudget;        
+        maxb_list[t] = maxbudget;
         return true;
     }
     
@@ -42,7 +42,7 @@ namespace RTSim {
         if (budget_flag) {
             Tick r = max(Tick(0), remaining_budget - (SIMUL.getTime() - last_update));
             Tick b = min(budget_list[t] + r, maxb_list[t]);
-            remaining_budget = 0;
+            remaining_budget -= b;
             return b;
         }
         else {
@@ -56,6 +56,7 @@ namespace RTSim {
         std::strcpy(taskname, t->getName().c_str());
 
         Tick wcet = compute_wcet(taskname, current_state) + computation_time(taskname);
+        trace[t].push_back(wcet);
 
         delete taskname;
         
@@ -76,14 +77,14 @@ namespace RTSim {
 
     void NPReclaimingServer::drop_instance(Task *t)
     {
-        cout << SIMUL.getTime() << " NPReclaimingServer::drop_instance() for task " << t->getName() << endl;
+        //cout << SIMUL.getTime() << " NPReclaimingServer::drop_instance() for task " << t->getName() << endl;
         drop_evt.set_dropped_task(t);
         drop_evt.process();
     }
 
     void NPReclaimingServer::onDrop(Event *evt)
     {
-        cout << "onDrop called" << endl;
+        //cout << "onDrop called" << endl;
     }
 
     Tick NPReclaimingServer::get_pwcet_cost(Task *t)
@@ -95,6 +96,16 @@ namespace RTSim {
         return r;
     }
 
+    vector<Tick> NPReclaimingServer::get_wcet_trace(const std::string &taskname)
+    {
+        vector<Tick> result; 
+        
+        Task *t = dynamic_cast<Task*>(Entity::_find(taskname));
+        if (t == nullptr) return result;
+        else return trace[t];
+    }
+
+    
     void DropStat::probe(NPReclaimingServer::PWCETDropEvent &e)
     {
         record(1);

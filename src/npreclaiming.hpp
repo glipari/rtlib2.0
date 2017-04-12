@@ -26,6 +26,9 @@ namespace RTSim {
 
         bool pwcet_flag;
         bool budget_flag;
+
+        std::map<Task *, std::vector<Tick> > trace; 
+
         
     public:
 
@@ -55,6 +58,8 @@ namespace RTSim {
         void drop_instance(Task *t); // signal the fact the an instance has been dropped
 
         void onDrop(MetaSim::Event *e);
+
+        std::vector<Tick> get_wcet_trace(const std::string &taskname);
         
         void newRun() { remaining_budget = 0; }
         void endRun() {}

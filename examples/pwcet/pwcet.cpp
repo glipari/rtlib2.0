@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
     BaseStat::setTransitory(transitory);
 
     
-    SIMUL.run(simul_time, -1);
+    SIMUL.run(simul_time);
     
     cout << "----------------------------" << endl;
 
@@ -237,8 +237,17 @@ int main(int argc, char *argv[])
     for (auto x : taskdata)
         out << left <<  setw(15) << x.name
             << ": dropped = " << setw(3) << stat.get_dropped(x.name)
-            << " | instances = " << setw(3) << simul_time / x.period
-            << " | miss = " << setw(3) << x.mc.getLastValue() << endl;
+            << " | instances = " << setw(3) << std::ceil(double(simul_time) / double(x.period))
+            << " | miss = " << setw(3) << x.mc.getValue() << endl;
 
+    for (auto x : taskdata) {
+        ofstream tasktrace(x.name + "_trace.txt");
+        
+        tasktrace << "# Trace of " <<  x.name << endl;
+        vector<Tick> res = server.get_wcet_trace(x.name);
+        for (auto r : res) tasktrace << r << endl;
+        tasktrace.close();
+    }
+    
     out.close();
 }

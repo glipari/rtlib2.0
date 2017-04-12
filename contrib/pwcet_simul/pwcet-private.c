@@ -33,7 +33,7 @@ char *task_name(int i) {
 
 int computation_time(char *name)
 {
-	printf("pas implem\n");
+	//printf("pas implem\n");
 	return 0;
 }
 
