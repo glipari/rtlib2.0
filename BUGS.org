@@ -41,3 +41,14 @@
    When selecting SIMUL.debug("All"), it will only print metasim
    debugging information. When selecting a specific constant (like
    _SCHED_DBG_LEV) it will print nothing.
+
+** ASSIGNED 
+   - State "ASSIGNED"   from "OPEN"       [2017-04-11 mar. 17:38] \\
+     Giuseppe
+   - State "OPEN"       from              [2017-04-11 mar. 17:38]
+
+   When calling getLastValue() on a statistical object at the end of a
+   single simulation run, I get core dump. Need to investigate if it
+   is a local problem with my setup or if it is a bug of MetaSim. 
+
+   - Write a test for it! 

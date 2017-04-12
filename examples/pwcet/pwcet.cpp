@@ -143,9 +143,10 @@ bool sched_analysis(vector<TaskStruct> &taskdata)
 
 void print_usage(const char *progname)
 {
-    cout << "Usage: " << progname << " [-polt] filename " << endl;
+    cout << "Usage: " << progname << " [-pbolt] filename " << endl;
     cout << "Options: " << endl;
     cout << "            -p : disables pwcet control" << endl;
+    cout << "            -b : disables budget control" << endl;
     cout << "   -o filename : output file name" << endl;
     cout << "     -l length : simulation length" << endl;
     cout << "     -t length : transitory length" << endl;
@@ -155,6 +156,7 @@ int main(int argc, char *argv[])
 {
     int c;
     bool pwcet_flag = true;
+    bool budget_flag = true;
     string outfilename = "results.txt";
     Tick transitory = 0;
     Tick simul_time = 5000000;
@@ -164,11 +166,15 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     
-    while ((c = getopt (argc, argv, "po:l:t:")) != -1) {
+    while ((c = getopt (argc, argv, "pbo:l:t:")) != -1) {
         switch(c) {
         case 'p' :
             cout << "PWCET disabled" << endl;
             pwcet_flag = false;
+            break;
+        case 'b' :
+            cout << "Budget control disabled" << endl;
+            budget_flag = false;
             break;
         case 'o' :
             cout << "Output file name = " << optarg << endl;
@@ -195,7 +201,9 @@ int main(int argc, char *argv[])
     EDFScheduler edfsched;
     RTKernel kern(&edfsched);
     
-    NPReclaimingServer server("nps", pwcet_flag); 
+    NPReclaimingServer server("nps");
+    server.set_budget_flag(budget_flag);
+    server.set_pwcet_flag(pwcet_flag);
     
     parse_file(argv[optind]);
 
@@ -220,7 +228,7 @@ int main(int argc, char *argv[])
     BaseStat::setTransitory(transitory);
 
     
-    SIMUL.run(simul_time);
+    SIMUL.run(simul_time, -1);
     
     cout << "----------------------------" << endl;
 
@@ -230,7 +238,7 @@ int main(int argc, char *argv[])
         out << left <<  setw(15) << x.name
             << ": dropped = " << setw(3) << stat.get_dropped(x.name)
             << " | instances = " << setw(3) << simul_time / x.period
-            << " | miss = " << setw(3) << x.mc.getValue() << endl;
+            << " | miss = " << setw(3) << x.mc.getLastValue() << endl;
 
     out.close();
 }

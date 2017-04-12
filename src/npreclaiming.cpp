@@ -13,12 +13,13 @@ namespace RTSim {
         return task;
     }
     
-    NPReclaimingServer::NPReclaimingServer(const std::string &name, bool flag) :
+    NPReclaimingServer::NPReclaimingServer(const std::string &name) : 
         Entity(name),
         remaining_budget(0),
         last_update(0),
         drop_evt(this, &NPReclaimingServer::onDrop),
-        pwcet_flag(flag)
+        pwcet_flag(true),
+        budget_flag(true)
     {
         current_state = init_state();
     }
@@ -38,10 +39,15 @@ namespace RTSim {
     
     Tick NPReclaimingServer::get_budget(Task *t)
     {
-        Tick r = max(Tick(0), remaining_budget - (SIMUL.getTime() - last_update));
-        Tick b = min(budget_list[t] + r, maxb_list[t]);
-        remaining_budget = 0;
-        return b;
+        if (budget_flag) {
+            Tick r = max(Tick(0), remaining_budget - (SIMUL.getTime() - last_update));
+            Tick b = min(budget_list[t] + r, maxb_list[t]);
+            remaining_budget = 0;
+            return b;
+        }
+        else {
+            return get_wcet(t);
+        }
     }
 
     Tick NPReclaimingServer::get_wcet(Task *t)

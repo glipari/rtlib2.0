@@ -305,13 +305,15 @@ namespace RTSim {
     public:
         MissCount(string name = "") : StatCount(name) {};
 
-        void probe(const DeadEvt &e) { record(1.0); }
+        void probe(const DeadEvt &e) {
+            std::cout << "miss count called!" << endl;
+            record(1.0);
+        }
 
-        void attachToTask(Task *t) 
-            {
-                attach_stat(*this, t->deadEvt);
-                //new Particle<DeadEvt, MissCount>(&t->deadEvt, this);
-            }
+        void attachToTask(Task *t) {
+            attach_stat(*this, t->deadEvt);
+            //new Particle<DeadEvt, MissCount>(&t->deadEvt, this);
+        }
     };
 
 

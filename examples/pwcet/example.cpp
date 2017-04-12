@@ -28,7 +28,7 @@ int main()
         EDFScheduler edfsched;
         RTKernel kern(&edfsched);
         
-        NPReclaimingServer server("nps", true); 
+        NPReclaimingServer server("nps");
 
         PeriodicTask t1(50000, 50000, 0, "sendautopilot");
         t1.insertCode("raise_thres(1);pwcet(nps,15550,50000);lower_thres(1);");

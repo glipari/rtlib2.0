@@ -12,7 +12,7 @@ TEST_CASE("PWCET 1", "[pwcet, test1]")
     EDFScheduler sched;
     RTKernel kern(&sched);
 
-    NPReclaimingServer server("nps", true);
+    NPReclaimingServer server("nps");
 
     PeriodicTask t1(12, 12, 0, "TaskA");
     t1.insertCode("raise_thres(1);pwcet(nps, 5);lower_thres(1);");

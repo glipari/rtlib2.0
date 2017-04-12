@@ -25,6 +25,7 @@ namespace RTSim {
         state_t *current_state;
 
         bool pwcet_flag;
+        bool budget_flag;
         
     public:
 
@@ -38,7 +39,10 @@ namespace RTSim {
 
         PWCETDropEvent drop_evt;
         
-        NPReclaimingServer(const std::string &name, bool flag);
+        NPReclaimingServer(const std::string &name);
+
+        void set_pwcet_flag(bool pwcet_flag) { this->pwcet_flag = pwcet_flag; }
+        void set_budget_flag(bool budget_flag) { this->budget_flag = budget_flag; }
         
         bool add_task(Task *t, Tick budget, Tick maxbudget); 
         void end_instance(Task *t, Tick remaining); // end of instance
