@@ -10,14 +10,14 @@ set (RTLIB_TEST_LIBRARY ${PROJECT_NAME}_test)
 add_library (${RTLIB_TEST_LIBRARY} ${LIBRARY_TYPE} TestMain.cpp)
 
 # Define a macro to simplify tests creation
-macro (create_test name src)
-    add_executable (${name} ${src})
+function (create_test name)
+    add_executable (${name} ${ARGN})
     target_compile_features (${name} PRIVATE cxx_range_for)
     target_link_libraries (${name} ${RTLIB_TEST_LIBRARY} ${PROJECT_NAME} ${metasim_LIBRARIES} ${contrib_LIBRARIES})
     add_test (NAME ${name} COMMAND ${name})
-endmacro (create_test)
+endfunction (create_test)
 
-create_test (TestCBS cbs.cpp)
+create_test (TestCBS test_CBS.cpp)
 create_test (TestTask test_task.cpp)
 create_test (TestMRT test_mrt.cpp)
 create_test (TestAVR test_AVR.cpp)
