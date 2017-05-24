@@ -13,7 +13,7 @@ endif()
 
 # Import MetaSim
 find_package(metasim REQUIRED)
-set(metasim_INCLUDE_DIRS "${metasim_DIR}/include")
+get_target_property(metasim_INCLUDE_DIRS metasim INTERFACE_INCLUDE_DIRECTORIES)
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
   get_target_property(metasim_LIBRARIES metasim IMPORTED_LOCATION_RELEASE)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
